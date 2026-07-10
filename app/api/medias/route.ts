@@ -9,13 +9,19 @@ export async function GET() {
     const auth = await requireAuth()
     if ("error" in auth) return auth.error
 
-    const response = await fetch(`${BACKEND_API_URL}/api/medias`, {
-      method: "GET",
-      headers: createAuthHeaders(auth.token),
-    })
+    const response = await fetch(
+      `${BACKEND_API_URL}/api/medias?page=1&limit=10&sortBy=created_at&orderBy=desc`,
+      {
+        method: "GET",
+        headers: createAuthHeaders(auth.token),
+      }
+    )
 
     if (!response.ok) {
-      return NextResponse.json({ success: false }, { status: response.status })
+      return NextResponse.json(
+        { success: false, data: await response.json() },
+        { status: response.status }
+      )
     }
 
     const data = await response.json()
