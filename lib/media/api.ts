@@ -1,6 +1,11 @@
-import { Media, PresignUploadInput, PresignedUploadUrlResponse } from "./types"
+import { Paginate } from "../paginate"
+import {
+  GeneratePresignedUploadUrlDetailResponse,
+  Media,
+  PresignUploadInput,
+} from "./types"
 
-export const getMedias = async (): Promise<Media[]> => {
+export const getMedias = async (): Promise<Paginate<Media>> => {
   const response = await fetch("/api/medias", {
     method: "GET",
   })
@@ -14,8 +19,8 @@ export const getMedias = async (): Promise<Media[]> => {
 
 export const generatePresignedUploadUrl = async (
   input: PresignUploadInput
-): Promise<PresignedUploadUrlResponse> => {
-  const response = await fetch("/api/media/presign-upload-url", {
+): Promise<GeneratePresignedUploadUrlDetailResponse> => {
+  const response = await fetch("/api/medias/presign-upload-url", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

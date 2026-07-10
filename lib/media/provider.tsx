@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useReducer } from "react"
+import { initPaginate } from "../paginate"
 import {
   generatePresignedUploadUrl,
   getMedias,
@@ -8,17 +9,10 @@ import {
 } from "./api"
 import { MediaContext } from "./context"
 import { mediaReducer } from "./reducer"
-import { MediaState } from "./types"
+import { Media, MediaState } from "./types"
 
 const initialState: MediaState = {
-  medias: [],
-  isMediasLoading: false,
-  mediasError: null,
-  uploadUrl: null,
-  isUploadLoading: false,
-  uploadError: null,
-  uploadProgress: null,
-  isUploaded: false,
+  medias: initPaginate<Media>(),
 }
 
 export function MediaProvider({ children }: { children: React.ReactNode }) {
@@ -41,29 +35,18 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
       const contentType = file.type || "application/octet-stream"
 
       try {
-        dispatch({ type: "UPLOAD_LOADING", payload: true })
-        dispatch({ type: "UPLOAD_START" })
-
         const { uploadUrl } = await generatePresignedUploadUrl({
           Filename: file.name,
           ContentType: contentType,
         })
 
-        dispatch({ type: "UPLOAD_PRESIGN_SUCCESS", payload: uploadUrl })
-
         await uploadFileToPresignedUrl(file, uploadUrl, (progress) => {
-          dispatch({ type: "UPLOAD_PROGRESS", payload: progress })
+          console.log(progress)
         })
 
-        dispatch({ type: "UPLOAD_SUCCESS" })
         await fetchMedias()
       } catch {
-        dispatch({
-          type: "UPLOAD_ERROR",
-          payload: "Failed to upload file",
-        })
-      } finally {
-        dispatch({ type: "UPLOAD_LOADING", payload: false })
+        console.error("Failed to upload file")
       }
     },
     [fetchMedias]

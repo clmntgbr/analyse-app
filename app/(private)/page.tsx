@@ -1,24 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { MediaItem } from "@/components/media-item"
 import { Button } from "@/components/ui/button"
 import { useMedia } from "@/lib/media/context"
 import { useUser } from "@/lib/user/context"
+import { useState } from "react"
 
 export default function Page() {
   const { user } = useUser()
-  const {
-    medias,
-    isMediasLoading,
-    mediasError,
-    uploadUrl,
-    isUploadLoading,
-    uploadError,
-    uploadProgress,
-    isUploaded,
-    fetchMedias,
-    uploadFile,
-  } = useMedia()
+  const { medias, fetchMedias, uploadFile } = useMedia()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
   const handleUpload = async () => {
@@ -34,27 +24,14 @@ export default function Page() {
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <h2 className="text-sm font-medium">Medias</h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={fetchMedias}
-              disabled={isMediasLoading}
-            >
-              {isMediasLoading ? "Loading..." : "Refresh"}
+            <Button variant="outline" size="sm" onClick={fetchMedias}>
+              Refresh
             </Button>
           </div>
 
-          {mediasError && (
-            <p className="text-destructive text-sm">{mediasError}</p>
-          )}
-
-          {isMediasLoading && medias.length === 0 ? (
-            <p className="text-muted-foreground text-sm">Loading medias...</p>
-          ) : (
-            <pre className="rounded-md bg-muted p-4 text-sm">
-              {JSON.stringify(medias, null, 2)}
-            </pre>
-          )}
+          <pre className="rounded-md bg-muted p-4 text-sm">
+            {JSON.stringify(medias, null, 2)}
+          </pre>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -69,40 +46,22 @@ export default function Page() {
             }}
           />
 
-          <Button
-            onClick={handleUpload}
-            disabled={isUploadLoading || !selectedFile}
-          >
-            {isUploadLoading ? "Uploading..." : "Upload file"}
+          <Button onClick={handleUpload} disabled={!selectedFile}>
+            Upload file
           </Button>
 
-          {uploadProgress !== null && (
-            <div className="flex flex-col gap-1">
-              <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
-                <div
-                  className="bg-primary h-full transition-all"
-                  style={{ width: `${uploadProgress}%` }}
-                />
-              </div>
-              <p className="text-muted-foreground text-sm">{uploadProgress}%</p>
-            </div>
-          )}
+          <pre className="rounded-md bg-muted p-4 text-sm wrap-break-word">
+            {JSON.stringify(selectedFile, null, 2)}
+          </pre>
+        </div>
+      </div>
 
-          {uploadError && (
-            <p className="text-destructive text-sm">{uploadError}</p>
-          )}
-
-          {isUploaded && (
-            <p className="text-sm text-green-600">
-              Upload completed successfully
-            </p>
-          )}
-
-          {uploadUrl && (
-            <pre className="rounded-md bg-muted p-4 text-sm wrap-break-word">
-              {uploadUrl}
-            </pre>
-          )}
+      <div className="mt-4 flex flex-col gap-4">
+        <h2 className="text-sm font-medium">Medias</h2>
+        <div className="flex flex-col gap-2">
+          {medias.members.map((media) => (
+            <MediaItem key={media.id} item={media} />
+          ))}
         </div>
       </div>
     </>
