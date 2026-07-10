@@ -1,10 +1,8 @@
 import { createAuthHeaders } from "@/lib/create-auth-headers"
-import { getBackendApiUrl } from "@/lib/get-backend-api-url"
 import { requireAuth } from "@/lib/require-auth"
 import { NextResponse } from "next/server"
 
-export const dynamic = "force-dynamic"
-export const fetchCache = "force-no-store"
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
 export async function GET(
   _request: Request,
@@ -17,7 +15,7 @@ export async function GET(
     const { id } = await params
 
     const response = await fetch(
-      `${getBackendApiUrl()}/api/medias/${id}/thumbnail`,
+      `${BACKEND_API_URL}/api/medias/${id}/thumbnail`,
       {
         method: "GET",
         headers: createAuthHeaders(auth.token, { json: false }),

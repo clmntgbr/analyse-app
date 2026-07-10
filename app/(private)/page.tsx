@@ -18,8 +18,6 @@ export default function Page() {
 
   return (
     <>
-      <pre>{JSON.stringify(user, null, 2)}</pre>
-
       <div className="mt-4 flex flex-col gap-4">
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
@@ -28,10 +26,6 @@ export default function Page() {
               Refresh
             </Button>
           </div>
-
-          <pre className="rounded-md bg-muted p-4 text-sm">
-            {JSON.stringify(medias, null, 2)}
-          </pre>
         </div>
 
         <div className="flex flex-col gap-2">
