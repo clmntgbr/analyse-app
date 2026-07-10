@@ -1,4 +1,16 @@
-import { PresignUploadInput, PresignedUploadUrlResponse } from "./types"
+import { Media, PresignUploadInput, PresignedUploadUrlResponse } from "./types"
+
+export const getMedias = async (): Promise<Media[]> => {
+  const response = await fetch("/api/medias", {
+    method: "GET",
+  })
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch medias")
+  }
+
+  return response.json()
+}
 
 export const generatePresignedUploadUrl = async (
   input: PresignUploadInput
@@ -26,7 +38,10 @@ export const uploadFileToPresignedUrl = (
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.open("PUT", presignedUrl)
-    xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream")
+    xhr.setRequestHeader(
+      "Content-Type",
+      file.type || "application/octet-stream"
+    )
 
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable && onProgress) {

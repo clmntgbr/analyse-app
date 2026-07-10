@@ -4,6 +4,7 @@ import { createContext, useContext } from "react"
 import { MediaState } from "./types"
 
 export interface MediaContextType extends MediaState {
+  fetchMedias: () => Promise<void>
   uploadFile: (file: File) => Promise<void>
 }
 

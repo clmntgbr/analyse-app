@@ -5,11 +5,30 @@ export const mediaReducer = (
   action: MediaAction
 ): MediaState => {
   switch (action.type) {
+    case "GET_MEDIAS":
+      return {
+        ...state,
+        medias: action.payload,
+        isMediasLoading: false,
+        mediasError: null,
+      }
+    case "GET_MEDIAS_ERROR":
+      return {
+        ...state,
+        medias: [],
+        isMediasLoading: false,
+        mediasError: action.payload,
+      }
+    case "GET_MEDIAS_LOADING":
+      return {
+        ...state,
+        isMediasLoading: action.payload,
+      }
     case "UPLOAD_START":
       return {
         ...state,
         uploadUrl: null,
-        error: null,
+        uploadError: null,
         uploadProgress: 0,
         isUploaded: false,
       }
@@ -28,19 +47,19 @@ export const mediaReducer = (
         ...state,
         uploadProgress: 100,
         isUploaded: true,
-        isLoading: false,
-        error: null,
+        isUploadLoading: false,
+        uploadError: null,
       }
     case "UPLOAD_ERROR":
       return {
         ...state,
-        isLoading: false,
-        error: action.payload,
+        isUploadLoading: false,
+        uploadError: action.payload,
       }
     case "UPLOAD_LOADING":
       return {
         ...state,
-        isLoading: action.payload,
+        isUploadLoading: action.payload,
       }
     default:
       return state
