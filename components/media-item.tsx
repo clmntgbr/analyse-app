@@ -4,7 +4,6 @@ import { Progress } from "@/components/ui/progress"
 import { Media } from "@/lib/media/types"
 import { cn } from "@/lib/utils"
 import { Loader2, X } from "lucide-react"
-import Image from "next/image"
 
 interface MediaItemProps {
   item: Media
@@ -19,13 +18,12 @@ export function MediaItem({ item }: MediaItemProps) {
     >
       {/* Vignette */}
       <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-secondary">
-        <Image
-          width={48}
-          height={48}
-          src={`/api/medias/${item.id}/thumbnail`}
+        <img
+          src={item.thumbnail}
           alt={`Aperçu de ${item.key}`}
           className="size-full object-cover"
-          unoptimized
+          width={48}
+          height={48}
         />
       </div>
 

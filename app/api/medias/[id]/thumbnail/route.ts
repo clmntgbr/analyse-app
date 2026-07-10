@@ -1,12 +1,14 @@
 import { createAuthHeaders } from "@/lib/create-auth-headers"
+import { getBackendApiUrl } from "@/lib/get-backend-api-url"
 import { requireAuth } from "@/lib/require-auth"
 import { NextResponse } from "next/server"
 
-const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
+export const dynamic = "force-dynamic"
+export const fetchCache = "force-no-store"
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const auth = await requireAuth()
@@ -14,34 +16,27 @@ export async function GET(
 
     const { id } = await params
 
-    console.log(id)
-
     const response = await fetch(
-      `${BACKEND_API_URL}/api/medias/${id}/thumbnail`,
+      `${getBackendApiUrl()}/api/medias/${id}/thumbnail`,
       {
         method: "GET",
-        headers: createAuthHeaders(auth.token),
+        headers: createAuthHeaders(auth.token, { json: false }),
+        cache: "no-store",
       }
     )
 
     if (!response.ok) {
-      return NextResponse.json(
-        { success: false, data: await response.json() },
-        { status: response.status }
-      )
+      return new NextResponse(null, { status: response.status })
     }
 
-    const contentType =
-      response.headers.get("content-type") ?? "application/octet-stream"
-    const imageBuffer = await response.arrayBuffer()
-
-    return new NextResponse(imageBuffer, {
+    return new NextResponse(response.body, {
       headers: {
-        "Content-Type": contentType,
-        "Cache-Control": "private, max-age=3600",
+        "Content-Type": response.headers.get("content-type") ?? "image/jpeg",
+        "Cache-Control": "public, max-age=86400",
       },
     })
-  } catch {
+  } catch (error) {
+    console.error("Thumbnail proxy error:", error)
     return NextResponse.json({ success: false }, { status: 500 })
   }
 }

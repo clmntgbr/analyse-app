@@ -1,8 +1,7 @@
 import { createAuthHeaders } from "@/lib/create-auth-headers"
+import { getBackendApiUrl } from "@/lib/get-backend-api-url"
 import { requireAuth } from "@/lib/require-auth"
 import { NextResponse } from "next/server"
-
-const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
 export async function POST(request: Request) {
   try {
@@ -12,7 +11,7 @@ export async function POST(request: Request) {
     const body = await request.json()
 
     const response = await fetch(
-      `${BACKEND_API_URL}/api/media/presign-upload-url`,
+      `${getBackendApiUrl()}/api/media/presign-upload-url`,
       {
         method: "POST",
         headers: createAuthHeaders(auth.token),
