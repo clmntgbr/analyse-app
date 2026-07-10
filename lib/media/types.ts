@@ -4,16 +4,21 @@ export interface PresignUploadInput {
 }
 
 export interface PresignedUploadUrlResponse {
-  upload_url: string
+  uploadUrl: string
 }
 
 export interface MediaState {
   uploadUrl: string | null
   isLoading: boolean
   error: string | null
+  uploadProgress: number | null
+  isUploaded: boolean
 }
 
 export type MediaAction =
-  | { type: "GET_PRESIGN_UPLOAD_URL"; payload: string }
-  | { type: "GET_PRESIGN_UPLOAD_URL_ERROR"; payload: string }
-  | { type: "GET_PRESIGN_UPLOAD_URL_LOADING"; payload: boolean }
+  | { type: "UPLOAD_START" }
+  | { type: "UPLOAD_PRESIGN_SUCCESS"; payload: string }
+  | { type: "UPLOAD_PROGRESS"; payload: number }
+  | { type: "UPLOAD_SUCCESS" }
+  | { type: "UPLOAD_ERROR"; payload: string }
+  | { type: "UPLOAD_LOADING"; payload: boolean }

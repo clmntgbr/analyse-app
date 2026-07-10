@@ -5,21 +5,39 @@ export const mediaReducer = (
   action: MediaAction
 ): MediaState => {
   switch (action.type) {
-    case "GET_PRESIGN_UPLOAD_URL":
-      return {
-        ...state,
-        uploadUrl: action.payload,
-        isLoading: false,
-        error: null,
-      }
-    case "GET_PRESIGN_UPLOAD_URL_ERROR":
+    case "UPLOAD_START":
       return {
         ...state,
         uploadUrl: null,
+        error: null,
+        uploadProgress: 0,
+        isUploaded: false,
+      }
+    case "UPLOAD_PRESIGN_SUCCESS":
+      return {
+        ...state,
+        uploadUrl: action.payload,
+      }
+    case "UPLOAD_PROGRESS":
+      return {
+        ...state,
+        uploadProgress: action.payload,
+      }
+    case "UPLOAD_SUCCESS":
+      return {
+        ...state,
+        uploadProgress: 100,
+        isUploaded: true,
+        isLoading: false,
+        error: null,
+      }
+    case "UPLOAD_ERROR":
+      return {
+        ...state,
         isLoading: false,
         error: action.payload,
       }
-    case "GET_PRESIGN_UPLOAD_URL_LOADING":
+    case "UPLOAD_LOADING":
       return {
         ...state,
         isLoading: action.payload,

@@ -1,10 +1,10 @@
 "use client"
 
 import { createContext, useContext } from "react"
-import { PresignUploadInput, MediaState } from "./types"
+import { MediaState } from "./types"
 
 export interface MediaContextType extends MediaState {
-  generatePresignedUploadUrl: (input: PresignUploadInput) => Promise<void>
+  uploadFile: (file: File) => Promise<void>
 }
 
 export const MediaContext = createContext<MediaContextType | undefined>(

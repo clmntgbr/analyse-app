@@ -7,16 +7,19 @@ import { useUser } from "@/lib/user/context"
 
 export default function Page() {
   const { user } = useUser()
-  const { uploadUrl, isLoading, error, generatePresignedUploadUrl } = useMedia()
+  const {
+    uploadUrl,
+    isLoading,
+    error,
+    uploadProgress,
+    isUploaded,
+    uploadFile,
+  } = useMedia()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
-  const handleGenerate = async () => {
+  const handleUpload = async () => {
     if (!selectedFile) return
-
-    await generatePresignedUploadUrl({
-      Filename: selectedFile.name,
-      ContentType: selectedFile.type || "application/octet-stream",
-    })
+    await uploadFile(selectedFile)
   }
 
   return (
@@ -33,14 +36,27 @@ export default function Page() {
           }}
         />
 
-        <Button
-          onClick={handleGenerate}
-          disabled={isLoading || !selectedFile}
-        >
-          {isLoading ? "Loading..." : "Generate presigned upload URL"}
+        <Button onClick={handleUpload} disabled={isLoading || !selectedFile}>
+          {isLoading ? "Uploading..." : "Upload file"}
         </Button>
 
+        {uploadProgress !== null && (
+          <div className="flex flex-col gap-1">
+            <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
+              <div
+                className="bg-primary h-full transition-all"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            </div>
+            <p className="text-muted-foreground text-sm">{uploadProgress}%</p>
+          </div>
+        )}
+
         {error && <p className="text-destructive text-sm">{error}</p>}
+
+        {isUploaded && (
+          <p className="text-sm text-green-600">Upload completed successfully</p>
+        )}
 
         {uploadUrl && (
           <pre className="rounded-md bg-muted p-4 text-sm wrap-break-word">
