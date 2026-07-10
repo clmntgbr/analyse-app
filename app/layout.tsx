@@ -12,6 +12,7 @@ import {
 import { Metadata } from "next"
 import { Geist_Mono, Inter } from "next/font/google"
 import "./globals.css"
+import { ui } from '@clerk/ui'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
 
@@ -42,7 +43,7 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ClerkProvider>
+        <ClerkProvider ui={ui}>
           <ThemeProvider>
             <header className="flex h-16 items-center justify-end gap-4 p-4">
               <SignedOut>
