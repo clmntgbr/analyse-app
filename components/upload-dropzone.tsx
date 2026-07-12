@@ -1,16 +1,25 @@
 import { useCallback, useRef, useState } from "react"
-import { CloudUpload } from "lucide-react"
+import { CloudUpload, FileVideo, ImageIcon, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import type { UploadFile } from "@/lib/mock-upload"
 
 interface UploadDropzoneProps {
   onFiles: (files: File[]) => void
+  pendingFiles?: UploadFile[]
+  onSend?: () => void
+  isSending?: boolean
 }
 
 const ACCEPT =
   ".jpg,.jpeg,.png,.mp4,.mov,image/jpeg,image/png,video/mp4,video/quicktime"
 
-export function UploadDropzone({ onFiles }: UploadDropzoneProps) {
+export function UploadDropzone({
+  onFiles,
+  pendingFiles = [],
+  onSend,
+  isSending = false,
+}: UploadDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
   const dragCounter = useRef(0)
@@ -25,6 +34,8 @@ export function UploadDropzone({ onFiles }: UploadDropzoneProps) {
     },
     [onFiles]
   )
+
+  const hasPending = pendingFiles.length > 0
 
   return (
     <div
@@ -51,45 +62,97 @@ export function UploadDropzone({ onFiles }: UploadDropzoneProps) {
       onDragOver={(e) => e.preventDefault()}
       onDrop={handleDrop}
       className={cn(
-        "group relative flex cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed px-6 py-14 text-center transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:py-20",
+        "group relative flex h-80 cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed px-6 text-center transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:h-96",
         dragging
           ? "border-primary bg-accent scale-[1.01] shadow-lg"
           : "border-border bg-card hover:border-primary/50 hover:bg-accent/50"
       )}
     >
-      <div
-        className={cn(
-          "flex size-16 items-center justify-center rounded-full transition-colors",
-          dragging
-            ? "bg-primary text-primary-foreground"
-            : "bg-secondary text-primary"
-        )}
-      >
-        <CloudUpload className="size-8" aria-hidden="true" />
-      </div>
-      <div className="space-y-1">
-        <p className="text-lg font-semibold text-foreground">
-          {dragging
-            ? "Lâche tes fichiers ici !"
-            : "Dépose ton image ou vidéo ici, ou clique pour parcourir"}
-        </p>
-        <p className="text-sm text-muted-foreground">
-          JPG, PNG, MP4 ou MOV — 100 Mo max par fichier, plusieurs fichiers
-          acceptés
-        </p>
-      </div>
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        className="pointer-events-none sm:pointer-events-auto"
-        onClick={(e) => {
-          e.stopPropagation()
-          inputRef.current?.click()
-        }}
-      >
-        Parcourir les fichiers
-      </Button>
+      {hasPending && !dragging ? (
+        <>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {pendingFiles.slice(0, 6).map((item) => {
+              const isVideo = item.file.type.startsWith("video/")
+
+              return (
+                <div
+                  key={item.id}
+                  className="flex size-24 items-center justify-center overflow-hidden rounded-xl border bg-secondary shadow-sm"
+                >
+                  {item.previewUrl ? (
+                    <img
+                      src={item.previewUrl}
+                      alt={`Aperçu de ${item.file.name}`}
+                      className="size-full object-cover"
+                    />
+                  ) : isVideo ? (
+                    <FileVideo
+                      className="size-8 text-muted-foreground"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <ImageIcon
+                      className="size-8 text-muted-foreground"
+                      aria-hidden="true"
+                    />
+                  )}
+                </div>
+              )
+            })}
+            {pendingFiles.length > 6 && (
+              <div className="flex size-24 items-center justify-center rounded-xl border bg-secondary text-sm font-medium text-muted-foreground">
+                +{pendingFiles.length - 6}
+              </div>
+            )}
+          </div>
+          <div className="space-y-1">
+            <p className="text-lg font-semibold text-foreground">
+              {pendingFiles.length} fichier{pendingFiles.length > 1 ? "s" : ""}{" "}
+              prêt{pendingFiles.length > 1 ? "s" : ""} à envoyer
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Clique sur la zone pour en ajouter d&apos;autres
+            </p>
+          </div>
+          <Button
+            type="button"
+            size="lg"
+            disabled={isSending}
+            className="gap-2"
+            onClick={(e) => {
+              e.stopPropagation()
+              onSend?.()
+            }}
+          >
+            <Send className="size-4" aria-hidden="true" />
+            Envoyer
+          </Button>
+        </>
+      ) : (
+        <>
+          <div
+            className={cn(
+              "flex size-16 items-center justify-center rounded-full transition-colors",
+              dragging
+                ? "bg-primary text-primary-foreground"
+                : "bg-secondary text-primary"
+            )}
+          >
+            <CloudUpload className="size-8" aria-hidden="true" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-lg font-semibold text-foreground">
+              {dragging
+                ? "Lâche tes fichiers ici !"
+                : "Dépose ton image ou vidéo ici, ou clique pour parcourir"}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              JPG, PNG, MP4 ou MOV — 100 Mo max par fichier, plusieurs fichiers
+              acceptés
+            </p>
+          </div>
+        </>
+      )}
       <input
         ref={inputRef}
         type="file"
