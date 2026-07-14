@@ -1,11 +1,17 @@
 import { Paginate } from "../paginate"
 
+export type MediaVerdict = "likely_ai" | "likely_human" | "uncertain"
+export type MediaConfidence = "low" | "medium" | "high"
+export type MediaStatus = "pending" | "processing" | "analyzed" | "error"
+
 export interface Media {
   id: string
   key: string
-  size: number
-  contentType: string
   thumbnail: string
+  status: MediaStatus
+  finalScore?: number
+  confidence?: MediaConfidence
+  verdict?: MediaVerdict
   createdAt: string
   updatedAt: string
 }

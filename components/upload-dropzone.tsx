@@ -12,7 +12,7 @@ interface UploadDropzoneProps {
 }
 
 const ACCEPT =
-  ".jpg,.jpeg,.png,.mp4,.mov,image/jpeg,image/png,video/mp4,video/quicktime"
+  ".jpg,.jpeg,.png,.webp,.mp4,.mov,image/jpeg,image/png,image/webp,video/mp4,video/quicktime"
 
 export function UploadDropzone({
   onFiles,
@@ -147,8 +147,8 @@ export function UploadDropzone({
                 : "Dépose ton image ou vidéo ici, ou clique pour parcourir"}
             </p>
             <p className="text-sm text-muted-foreground">
-              JPG, PNG, MP4 ou MOV — 100 Mo max par fichier, plusieurs fichiers
-              acceptés
+              JPG, PNG, WebP, MP4 ou MOV — 100 Mo max par fichier, plusieurs
+              fichiers acceptés
             </p>
           </div>
         </>
