@@ -1,6 +1,5 @@
 import { MediaThumbnail } from "@/components/media-thumbnail"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import {
   Media,
   MediaConfidence,
@@ -38,8 +37,8 @@ const verdictConfig: Record<
     icon: Bot,
     className: "bg-destructive/10 text-destructive border-destructive/20",
   },
-  likely_human: {
-    label: "Probablement humain",
+  likely_real: {
+    label: "Probablement réel",
     icon: User,
     className: "bg-primary/10 text-primary border-primary/20",
   },
@@ -62,17 +61,19 @@ function isVideoKey(key: string): boolean {
 
 export function MediaItem({ item }: MediaItemProps) {
   const isVideo = isVideoKey(item.key)
-  const isAnalyzed = item.status === "analyzed" && item.verdict
-  const inProgress = item.status === "pending" || item.status === "processing"
+  const isComplete = item.status === "analyzed" && item.verdict
+  const isInProgress = !isComplete && item.status !== "error"
+  const isError = item.status === "error"
 
   return (
     <li
       className={cn(
         "flex items-center gap-4 rounded-xl border bg-card p-4 transition-colors",
-        item.status === "error" && "border-destructive/40 bg-destructive/5"
+        isError && "border-destructive/40 bg-destructive/5",
+        isInProgress && "border-primary/20"
       )}
     >
-      <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-secondary">
+      <div className="relative flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-secondary">
         {item.thumbnail ? (
           <MediaThumbnail
             src={item.thumbnail}
@@ -90,6 +91,14 @@ export function MediaItem({ item }: MediaItemProps) {
             aria-hidden="true"
           />
         )}
+        {isInProgress && (
+          <div
+            className="absolute inset-0 flex items-center justify-center bg-background/70"
+            aria-hidden="true"
+          >
+            <Loader2 className="size-5 animate-spin text-primary" />
+          </div>
+        )}
       </div>
 
       <div className="min-w-0 flex-1 space-y-1.5">
@@ -99,10 +108,12 @@ export function MediaItem({ item }: MediaItemProps) {
           </p>
         </div>
 
-        {isAnalyzed && item.verdict ? (
+        {isComplete && item.verdict ? (
           <div className="flex flex-wrap items-center gap-2 pt-0.5">
             {(() => {
               const cfg = verdictConfig[item.verdict]
+              if (!cfg) return null
+
               const Icon = cfg.icon
 
               return (
@@ -123,32 +134,40 @@ export function MediaItem({ item }: MediaItemProps) {
               </span>
             )}
           </div>
-        ) : inProgress ? (
-          <div className="flex items-center gap-3">
-            <Progress
-              value={item.status === "processing" ? 66 : 33}
-              className="h-1.5 flex-1"
-              aria-label={`Progression de ${item.key}`}
+        ) : isInProgress ? (
+          <div className="flex items-center gap-2 pt-0.5">
+            <Loader2
+              className="size-3.5 shrink-0 animate-spin text-primary"
+              aria-hidden="true"
             />
-            <span className="w-9 shrink-0 text-right text-xs text-muted-foreground tabular-nums">
-              {item.status === "processing" ? "66%" : "33%"}
+            <span className="text-xs text-muted-foreground">
+              {statusLabel[item.status] ?? item.status}
             </span>
           </div>
+        ) : isError ? (
+          <p className="text-xs text-destructive">{statusLabel.error}</p>
         ) : null}
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        {item.status === "analyzed" ? (
+        {isComplete ? (
           <Badge variant="secondary" className="gap-1 text-primary">
             <CheckCircle2 className="size-3.5" aria-hidden="true" />
             {statusLabel.analyzed}
           </Badge>
         ) : (
-          <Badge variant="outline" className="gap-1 text-muted-foreground">
-            {inProgress && (
+          <Badge
+            variant="outline"
+            className={cn(
+              "gap-1",
+              isInProgress && "text-primary",
+              isError && "text-destructive"
+            )}
+          >
+            {isInProgress && (
               <Loader2 className="size-3 animate-spin" aria-hidden="true" />
             )}
-            {statusLabel[item.status]}
+            {statusLabel[item.status] ?? item.status}
           </Badge>
         )}
       </div>

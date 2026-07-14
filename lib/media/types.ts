@@ -1,6 +1,6 @@
 import { Paginate } from "../paginate"
 
-export type MediaVerdict = "likely_ai" | "likely_human" | "uncertain"
+export type MediaVerdict = "likely_ai" | "likely_real" | "uncertain"
 export type MediaConfidence = "low" | "medium" | "high"
 export type MediaStatus = "pending" | "processing" | "analyzed" | "error"
 
