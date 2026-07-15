@@ -4,6 +4,7 @@ import { useCallback, useEffect, useReducer } from "react"
 import { initPaginate } from "../paginate"
 import {
   generatePresignedUploadUrl,
+  getMedia,
   getMedias,
   uploadFileToPresignedUrl,
 } from "./api"
@@ -13,6 +14,8 @@ import { Media, MediaState } from "./types"
 
 const initialState: MediaState = {
   medias: initPaginate<Media>(),
+  isMediasLoading: false,
+  mediasError: null,
 }
 
 export function MediaProvider({ children }: { children: React.ReactNode }) {
@@ -28,6 +31,10 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
     } finally {
       dispatch({ type: "GET_MEDIAS_LOADING", payload: false })
     }
+  }, [])
+
+  const fetchMedia = useCallback(async (id: string) => {
+    return getMedia(id)
   }, [])
 
   const uploadFile = useCallback(
@@ -61,6 +68,7 @@ export function MediaProvider({ children }: { children: React.ReactNode }) {
       value={{
         ...state,
         fetchMedias,
+        fetchMedia,
         uploadFile,
       }}
     >

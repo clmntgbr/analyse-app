@@ -17,6 +17,24 @@ export const getMedias = async (): Promise<Paginate<Media>> => {
   return response.json()
 }
 
+export const getMedia = async (id: string): Promise<Media> => {
+  const response = await fetch(`/api/medias/${id}`, {
+    method: "GET",
+  })
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch media")
+  }
+
+  const payload = (await response.json()) as { data?: Media } | Media
+
+  if ("data" in payload && payload.data) {
+    return payload.data
+  }
+
+  return payload as Media
+}
+
 export const generatePresignedUploadUrl = async (
   input: PresignUploadInput
 ): Promise<GeneratePresignedUploadUrlDetailResponse> => {

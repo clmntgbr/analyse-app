@@ -1,4 +1,4 @@
-import { MediaConfidence, MediaVerdict } from "@/lib/media/types"
+import { MediaConfidence, MediaVerdict, Signal } from "@/lib/media/types"
 
 export interface AnalysisStartedEvent {
   type: "analysis_started"
@@ -14,7 +14,7 @@ export interface AnalysisCompletedEvent {
   finalScore: number
   confidence: MediaConfidence
   verdict: MediaVerdict
-  signals: unknown[]
+  signals: Signal[]
 }
 
 export type MediaStreamEvent = AnalysisStartedEvent | AnalysisCompletedEvent

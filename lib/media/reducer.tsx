@@ -15,7 +15,6 @@ export const mediaReducer = (
     case "GET_MEDIAS_ERROR":
       return {
         ...state,
-        medias: [],
         isMediasLoading: false,
         mediasError: action.payload,
       }
@@ -23,43 +22,6 @@ export const mediaReducer = (
       return {
         ...state,
         isMediasLoading: action.payload,
-      }
-    case "UPLOAD_START":
-      return {
-        ...state,
-        uploadUrl: null,
-        uploadError: null,
-        uploadProgress: 0,
-        isUploaded: false,
-      }
-    case "UPLOAD_PRESIGN_SUCCESS":
-      return {
-        ...state,
-        uploadUrl: action.payload,
-      }
-    case "UPLOAD_PROGRESS":
-      return {
-        ...state,
-        uploadProgress: action.payload,
-      }
-    case "UPLOAD_SUCCESS":
-      return {
-        ...state,
-        uploadProgress: 100,
-        isUploaded: true,
-        isUploadLoading: false,
-        uploadError: null,
-      }
-    case "UPLOAD_ERROR":
-      return {
-        ...state,
-        isUploadLoading: false,
-        uploadError: action.payload,
-      }
-    case "UPLOAD_LOADING":
-      return {
-        ...state,
-        isUploadLoading: action.payload,
       }
     default:
       return state

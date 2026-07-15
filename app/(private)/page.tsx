@@ -55,8 +55,6 @@ export default function Page() {
       />
 
       <div className="flex flex-col gap-4">
-        <h2 className="text-sm font-medium">Medias</h2>
-
         <ul className="flex flex-col gap-2">
           {medias.members.map((media) => (
             <MediaItem key={media.id} item={media} />

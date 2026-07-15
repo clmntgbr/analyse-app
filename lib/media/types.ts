@@ -1,7 +1,7 @@
 import { Paginate } from "../paginate"
 
 export type MediaVerdict = "likely_ai" | "likely_real" | "uncertain"
-export type MediaConfidence = "low" | "medium" | "high"
+export type MediaConfidence = "low" | "medium" | "high" | "unknown"
 export type MediaStatus = "pending" | "processing" | "analyzed" | "error"
 
 export interface Media {
@@ -12,6 +12,18 @@ export interface Media {
   finalScore?: number
   confidence?: MediaConfidence
   verdict?: MediaVerdict
+  signals?: Signal[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Signal {
+  id: string
+  mediaId: string
+  name: string
+  score: number
+  confidence: MediaConfidence
+  details: string[]
   createdAt: string
   updatedAt: string
 }
@@ -27,6 +39,8 @@ export interface GeneratePresignedUploadUrlDetailResponse {
 
 export interface MediaState {
   medias: Paginate<Media>
+  isMediasLoading: boolean
+  mediasError: string | null
 }
 
 export type MediaAction =

@@ -1,10 +1,11 @@
 "use client"
 
 import { createContext, useContext } from "react"
-import { MediaState } from "./types"
+import { Media, MediaState } from "./types"
 
 export interface MediaContextType extends MediaState {
   fetchMedias: () => Promise<void>
+  fetchMedia: (id: string) => Promise<Media>
   uploadFile: (file: File) => Promise<void>
 }
 
