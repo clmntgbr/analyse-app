@@ -8,6 +8,7 @@ export interface Media {
   id: string
   key: string
   thumbnail: string
+  size?: number
   status: MediaStatus
   finalScore?: number
   confidence?: MediaConfidence

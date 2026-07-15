@@ -7,6 +7,7 @@ import {
   CONFIDENCE_LABEL,
   VERDICT_COLOR_VAR,
   VERDICT_CONFIG,
+  formatBytes,
   getMediaProgress,
   isVideoMedia,
 } from "@/lib/media/analysis"
@@ -94,6 +95,11 @@ export function MediaItem({ item }: MediaItemProps) {
           </p>
 
           <div className="flex flex-wrap items-center gap-2">
+            {item.size !== undefined && (
+              <span className="text-xs font-bold text-muted-foreground tabular-nums">
+                {formatBytes(item.size)}
+              </span>
+            )}
             {isComplete &&
             cfg &&
             item.verdict &&
@@ -102,7 +108,7 @@ export function MediaItem({ item }: MediaItemProps) {
                 <VerdictBadge verdict={item.verdict} />
                 <ScorePill score={item.finalScore} verdict={item.verdict} />
                 {item.confidence && (
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-xs font-bold text-muted-foreground tabular-nums">
                     Confiance {CONFIDENCE_LABEL[item.confidence]}
                   </span>
                 )}
