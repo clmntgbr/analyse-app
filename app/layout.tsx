@@ -10,11 +10,13 @@ import {
   UserButton,
 } from "@clerk/nextjs"
 import { Metadata } from "next"
-import { Geist_Mono, Inter } from "next/font/google"
+import { Geist_Mono, Inter, Sora } from "next/font/google"
 import "./globals.css"
 import { ui } from '@clerk/ui'
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+
+const sora = Sora({ subsets: ["latin"], variable: "--font-display" })
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -39,7 +41,8 @@ export default function RootLayout({
         "antialiased",
         fontMono.variable,
         "font-sans",
-        inter.variable
+        inter.variable,
+        sora.variable
       )}
     >
       <body>

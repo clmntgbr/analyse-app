@@ -1,13 +1,14 @@
-import { useCallback, useRef, useState } from "react"
-import { CloudUpload, FileVideo, ImageIcon, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
 import type { UploadFile } from "@/lib/mock-upload"
+import { cn } from "@/lib/utils"
+import { CloudUpload, FileVideo, ImageIcon, Send, X } from "lucide-react"
+import { useCallback, useRef, useState } from "react"
 
 interface UploadDropzoneProps {
   onFiles: (files: File[]) => void
   pendingFiles?: UploadFile[]
   onSend?: () => void
+  onCancel?: () => void
   isSending?: boolean
 }
 
@@ -18,6 +19,7 @@ export function UploadDropzone({
   onFiles,
   pendingFiles = [],
   onSend,
+  onCancel,
   isSending = false,
 }: UploadDropzoneProps) {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -41,7 +43,7 @@ export function UploadDropzone({
     <div
       role="button"
       tabIndex={0}
-      aria-label="Zone de dépôt de fichiers — clique ou dépose des images et vidéos"
+      aria-label="Zone de dépôt de fichiers"
       onClick={() => inputRef.current?.click()}
       onKeyDown={(e) => {
         if (e.key === "Enter" || e.key === " ") {
@@ -62,9 +64,9 @@ export function UploadDropzone({
       onDragOver={(e) => e.preventDefault()}
       onDrop={handleDrop}
       className={cn(
-        "group relative flex h-80 cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-2 border-dashed px-6 text-center transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:h-96",
+        "group relative flex h-80 cursor-pointer flex-col items-center justify-center gap-4 rounded-2xl border-3 border-dashed px-6 text-center transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:h-96",
         dragging
-          ? "border-primary bg-accent scale-[1.01] shadow-lg"
+          ? "scale-[1.01] border-primary bg-accent shadow-lg"
           : "border-border bg-card hover:border-primary/50 hover:bg-accent/50"
       )}
     >
@@ -105,28 +107,35 @@ export function UploadDropzone({
               </div>
             )}
           </div>
-          <div className="space-y-1">
-            <p className="text-lg font-semibold text-foreground">
-              {pendingFiles.length} fichier{pendingFiles.length > 1 ? "s" : ""}{" "}
-              prêt{pendingFiles.length > 1 ? "s" : ""} à envoyer
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Clique sur la zone pour en ajouter d&apos;autres
-            </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            <Button
+              type="button"
+              size="lg"
+              disabled={isSending}
+              className="cursor-pointer gap-2"
+              onClick={(e) => {
+                e.stopPropagation()
+                onSend?.()
+              }}
+            >
+              <Send className="size-4" aria-hidden="true" />
+              Envoyer
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="lg"
+              disabled={isSending}
+              className="cursor-pointer gap-2"
+              onClick={(e) => {
+                e.stopPropagation()
+                onCancel?.()
+              }}
+            >
+              <X className="size-4" aria-hidden="true" />
+              Annuler
+            </Button>
           </div>
-          <Button
-            type="button"
-            size="lg"
-            disabled={isSending}
-            className="gap-2"
-            onClick={(e) => {
-              e.stopPropagation()
-              onSend?.()
-            }}
-          >
-            <Send className="size-4" aria-hidden="true" />
-            Envoyer
-          </Button>
         </>
       ) : (
         <>
@@ -144,7 +153,7 @@ export function UploadDropzone({
             <p className="text-lg font-semibold text-foreground">
               {dragging
                 ? "Lâche tes fichiers ici !"
-                : "Dépose ton image ou vidéo ici, ou clique pour parcourir"}
+                : "Dépose ton image ou vidéo ici"}
             </p>
             <p className="text-sm text-muted-foreground">
               JPG, PNG, WebP, MP4 ou MOV — 100 Mo max par fichier, plusieurs

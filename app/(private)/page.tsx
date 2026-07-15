@@ -1,6 +1,6 @@
 "use client"
 
-import { MediaItem } from "@/components/media-item"
+import { Header } from "@/components/header"
 import { UploadDropzone } from "@/components/upload-dropzone"
 import { useMedia } from "@/lib/media/context"
 import {
@@ -45,22 +45,23 @@ export default function Page() {
     }
   }, [isSending, pendingFiles, uploadFile])
 
+  const handleCancel = useCallback(() => {
+    if (isSending) return
+
+    revokeUploadFilePreviews(pendingFiles)
+    setPendingFiles([])
+  }, [isSending, pendingFiles])
+
   return (
-    <div className="mx-auto flex max-w-3xl flex-col gap-8 p-4">
+    <div className="container mx-auto flex max-w-6xl flex-col gap-8 p-4">
+      <Header />
       <UploadDropzone
         onFiles={handleFiles}
         pendingFiles={pendingFiles}
         onSend={handleSend}
+        onCancel={handleCancel}
         isSending={isSending}
       />
-
-      <div className="flex flex-col gap-4">
-        <ul className="flex flex-col gap-2">
-          {medias.members.map((media) => (
-            <MediaItem key={media.id} item={media} />
-          ))}
-        </ul>
-      </div>
     </div>
   )
 }
