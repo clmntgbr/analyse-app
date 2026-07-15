@@ -18,7 +18,7 @@ export default function PrivateLayout({
       <UserProvider>
         <MediaProvider>
           <MediaCentrifugeListener />
-          <div className="mx-auto px-0">{children}</div>
+          <div className="mx-auto bg-background px-0">{children}</div>
         </MediaProvider>
       </UserProvider>
     </ThemeProvider>

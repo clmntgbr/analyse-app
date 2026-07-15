@@ -2,9 +2,11 @@
 
 import { MediaThumbnail } from "@/components/media-thumbnail"
 import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
@@ -12,8 +14,8 @@ import { Progress } from "@/components/ui/progress"
 import { useMedia } from "@/lib/media/context"
 import { Media, MediaConfidence, MediaVerdict } from "@/lib/media/types"
 import { cn } from "@/lib/utils"
-import { Bot, HelpCircle, Loader2, ShieldCheck } from "lucide-react"
-import { useEffect, useState } from "react"
+import { Bot, HelpCircle, Loader2, User } from "lucide-react"
+import { useEffect, useState, type ReactNode } from "react"
 
 interface MediaDetailDrawerProps {
   mediaId: string
@@ -32,9 +34,9 @@ const verdictConfig: Record<
     className: "bg-destructive/10 text-destructive border-destructive/20",
   },
   likely_real: {
-    label: "Probablement authentique",
-    icon: ShieldCheck,
-    className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
+    label: "Probablement réel",
+    icon: User,
+    className: "bg-primary/10 text-primary border-primary/20",
   },
   uncertain: {
     label: "Incertain",
@@ -44,21 +46,32 @@ const verdictConfig: Record<
 }
 
 const confidenceLabel: Record<MediaConfidence, string> = {
-  low: "faible",
-  medium: "moyenne",
-  high: "élevée",
-  unknown: "inconnue",
+  low: "Confiance faible",
+  medium: "Confiance moyenne",
+  high: "Confiance élevée",
+  unknown: "Confiance inconnue",
 }
 
 function formatDate(iso: string) {
   try {
     return new Date(iso).toLocaleString("fr-FR", {
-      dateStyle: "short",
-      timeStyle: "medium",
+      dateStyle: "medium",
+      timeStyle: "short",
     })
   } catch {
     return iso
   }
+}
+
+function MetaRow({ label, value }: { label: string; value: ReactNode }) {
+  return (
+    <div className="flex items-start justify-between gap-4 py-2.5">
+      <span className="shrink-0 text-sm text-muted-foreground">{label}</span>
+      <span className="min-w-0 text-right text-sm font-medium text-foreground">
+        {value}
+      </span>
+    </div>
+  )
 }
 
 export function MediaDetailDrawer({
@@ -103,158 +116,165 @@ export function MediaDetailDrawer({
   const cfg = media?.verdict ? verdictConfig[media.verdict] : null
   const Icon = cfg?.icon
   const signals = media?.signals ?? []
+  const title = fileName ?? media?.key ?? "Détail du média"
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange} direction="right">
       <DrawerContent className="flex h-full w-[30vw]! max-w-[30vw]! flex-col">
-        <DrawerHeader className="hidden">
-          <DrawerTitle className="hidden truncate text-left">
-            {fileName ?? media?.key ?? "Détail du média"}
+        <DrawerHeader className="border-b px-5 pb-4">
+          <DrawerTitle className="truncate text-left text-base font-semibold">
+            {title}
           </DrawerTitle>
+          <DrawerDescription className="text-left">
+            Résultat de l&apos;analyse et signaux détectés
+          </DrawerDescription>
         </DrawerHeader>
 
         <div className="flex min-h-0 flex-1 flex-col overflow-auto">
-          <div className="space-y-6 px-4 py-4">
+          <div className="space-y-4 px-5 py-5">
             {isLoading ? (
-              <div className="flex items-center justify-center gap-2 py-12 text-sm text-muted-foreground">
-                <Loader2 className="size-4 animate-spin" aria-hidden="true" />
-                Chargement…
-              </div>
+              <Card>
+                <CardContent className="flex items-center justify-center gap-2 py-16 text-sm text-muted-foreground">
+                  <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                  Chargement…
+                </CardContent>
+              </Card>
             ) : error ? (
-              <p className="py-12 text-center text-sm text-destructive">
-                {error}
-              </p>
+              <Card>
+                <CardContent className="py-16 text-center text-sm font-medium text-destructive">
+                  {error}
+                </CardContent>
+              </Card>
             ) : media ? (
               <>
                 {media.thumbnail && (
-                  <div className="overflow-hidden rounded-lg border bg-secondary">
-                    <MediaThumbnail
-                      src={media.thumbnail}
-                      alt={fileName ?? media.key}
-                      className="max-h-64 w-full object-contain"
-                    />
-                  </div>
+                  <Card className="overflow-hidden py-0">
+                    <CardContent className="px-0">
+                      <MediaThumbnail
+                        src={media.thumbnail}
+                        alt={title}
+                        className="max-h-72 w-full object-contain"
+                      />
+                    </CardContent>
+                  </Card>
                 )}
 
                 {isAnalyzed && cfg && Icon && media.finalScore !== undefined ? (
-                  <div className="rounded-xl border bg-card p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <Badge
-                        variant="outline"
-                        className={cn("gap-1.5", cfg.className)}
-                      >
-                        <Icon className="size-4" aria-hidden="true" />
-                        {cfg.label}
-                      </Badge>
-                      {media.confidence && (
-                        <span className="text-xs text-muted-foreground">
-                          Confiance {confidenceLabel[media.confidence]}
-                        </span>
-                      )}
-                    </div>
-                    <div className="mt-4">
-                      <div className="mb-1 flex items-baseline justify-between">
-                        <span className="text-xs tracking-wide text-muted-foreground uppercase">
-                          Score final
-                        </span>
-                        <span className="font-display text-2xl font-bold text-foreground tabular-nums">
-                          {media.finalScore.toFixed(1)}
-                        </span>
+                  <Card>
+                    <CardContent className="space-y-4">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge
+                          variant="outline"
+                          className={cn("gap-1", cfg.className)}
+                        >
+                          <Icon className="size-3.5" aria-hidden="true" />
+                          {cfg.label}
+                        </Badge>
+                        <Badge variant="secondary" className="tabular-nums">
+                          Score {media.finalScore.toFixed(1)}
+                        </Badge>
+                        {media.confidence && (
+                          <span className="text-xs text-muted-foreground">
+                            {confidenceLabel[media.confidence]}
+                          </span>
+                        )}
                       </div>
-                      <Progress
-                        value={Math.min(100, media.finalScore)}
-                        className="h-2"
-                      />
-                    </div>
-                  </div>
+                    </CardContent>
+                  </Card>
                 ) : (
-                  <div className="flex items-center gap-2 rounded-xl border bg-card p-4 text-sm text-muted-foreground">
-                    <Loader2 className="size-4 animate-spin text-primary" />
-                    Analyse en cours…
-                  </div>
+                  <Card>
+                    <CardContent className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 className="size-4 animate-spin text-primary" />
+                      <span className="font-medium">Analyse en cours…</span>
+                    </CardContent>
+                  </Card>
                 )}
 
                 {signals.length > 0 && (
-                  <div>
-                    <h3 className="mb-3 text-sm font-semibold tracking-wide text-muted-foreground uppercase">
+                  <div className="space-y-3">
+                    <p className="text-sm font-semibold text-foreground">
                       Signaux ({signals.length})
-                    </h3>
+                    </p>
                     <ul className="space-y-3">
-                      {signals.map((signal) => (
-                        <li
-                          key={signal.id}
-                          className="rounded-lg border bg-card p-4"
-                        >
-                          <div className="mb-2 flex items-center justify-between gap-2">
-                            <p className="font-mono text-sm font-medium text-foreground">
-                              {signal.name}
-                            </p>
-                            <div className="flex items-center gap-2">
-                              <Badge
-                                variant="secondary"
-                                className="tabular-nums"
-                              >
-                                {signal.score}
-                              </Badge>
-                              <span className="text-[11px] text-muted-foreground">
-                                conf. {confidenceLabel[signal.confidence]}
+                      {signals.map((signal, index) => (
+                        <li key={`${signal.id || signal.name}-${index}`}>
+                          <Card>
+                            <CardHeader className="pb-0">
+                              <div className="flex items-start justify-between gap-3">
+                                <CardTitle className="font-semibold">
+                                  {signal.name}
+                                </CardTitle>
+                                <div className="flex shrink-0 items-center gap-2">
+                                  <Badge
+                                    variant="secondary"
+                                    className="font-semibold tabular-nums"
+                                  >
+                                    {signal.score}
+                                  </Badge>
+                                </div>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="space-y-3">
+                              <span className="text-xs text-muted-foreground">
+                                {confidenceLabel[signal.confidence]}
                               </span>
-                            </div>
-                          </div>
-                          <Progress
-                            value={Math.min(100, signal.score)}
-                            className="mb-3 h-1.5"
-                          />
-                          {signal.details.length > 0 && (
-                            <ul className="space-y-1">
-                              {signal.details.map((detail, index) => (
-                                <li
-                                  key={index}
-                                  className="font-mono text-[11px] leading-relaxed text-muted-foreground"
-                                >
-                                  • {detail}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
+                              <Progress
+                                value={Math.min(100, signal.score)}
+                                className="h-1.5"
+                              />
+                              {signal.details.length > 0 && (
+                                <ul className="space-y-1.5 border-t pt-3">
+                                  {signal.details.map((detail, index) => (
+                                    <li
+                                      key={index}
+                                      className="text-sm leading-relaxed text-muted-foreground"
+                                    >
+                                      {detail}
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </CardContent>
+                          </Card>
                         </li>
                       ))}
                     </ul>
                   </div>
                 )}
 
-                <dl className="grid grid-cols-1 gap-3 rounded-lg border bg-card p-4 text-xs sm:grid-cols-2">
-                  <div>
-                    <dt className="text-muted-foreground">ID</dt>
-                    <dd className="mt-0.5 truncate font-mono text-foreground">
-                      {media.id}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">Clé</dt>
-                    <dd className="mt-0.5 truncate font-mono text-foreground">
-                      {media.key}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">Statut</dt>
-                    <dd className="mt-0.5 font-mono text-foreground">
-                      {media.status}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-muted-foreground">Créé le</dt>
-                    <dd className="mt-0.5 text-foreground">
-                      {formatDate(media.createdAt)}
-                    </dd>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <dt className="text-muted-foreground">Mis à jour</dt>
-                    <dd className="mt-0.5 text-foreground">
-                      {formatDate(media.updatedAt)}
-                    </dd>
-                  </div>
-                </dl>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="font-semibold">
+                      Informations
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="divide-y pt-0">
+                    <MetaRow
+                      label="Statut"
+                      value={<span className="capitalize">{media.status}</span>}
+                    />
+                    <MetaRow
+                      label="Créé le"
+                      value={formatDate(media.createdAt)}
+                    />
+                    <MetaRow
+                      label="Mis à jour"
+                      value={formatDate(media.updatedAt)}
+                    />
+                    <MetaRow
+                      label="Identifiant"
+                      value={
+                        <span className="text-xs font-normal">{media.id}</span>
+                      }
+                    />
+                    <MetaRow
+                      label="Fichier"
+                      value={
+                        <span className="text-xs font-normal">{media.key}</span>
+                      }
+                    />
+                  </CardContent>
+                </Card>
               </>
             ) : null}
           </div>
