@@ -11,11 +11,13 @@ import {
   revokeUploadFilePreviews,
   type UploadFile,
 } from "@/lib/mock-upload"
+import { useStatistics } from "@/lib/statistics/context"
 import { Bot, ImageIcon, Images, ShieldCheck, TrendingUp } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 export default function Page() {
   const { medias, uploadFile } = useMedia()
+  const { statistics } = useStatistics()
   const [pendingFiles, setPendingFiles] = useState<UploadFile[]>([])
   const [isSending, setIsSending] = useState(false)
   const pendingFilesRef = useRef(pendingFiles)
@@ -71,25 +73,27 @@ export default function Page() {
         <StatCard
           icon={Images}
           label="Analyses"
-          value={"3"}
+          value={String(statistics?.analysesCount ?? 0)}
           color="text-primary"
         />
         <StatCard
           icon={ShieldCheck}
           label="Réelles"
-          value={"1"}
+          value={String(statistics?.realImageCount ?? 0)}
           color="text-success"
         />
         <StatCard
           icon={Bot}
           label="Générées IA"
-          value={"2"}
+          value={String(statistics?.aiImageCount ?? 0)}
           color="text-destructive"
         />
         <StatCard
           icon={TrendingUp}
           label="Score moyen"
-          value={"4.5"}
+          value={
+            statistics ? statistics.averageScore.toFixed(1) : "—"
+          }
           color="text-warning"
         />
       </section>

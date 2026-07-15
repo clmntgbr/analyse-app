@@ -5,6 +5,7 @@ export type VerdictIcon = "shield-check" | "user" | "help-circle" | "bot"
 export interface VerdictConfig {
   short: string
   label: string
+  description: string
   icon: VerdictIcon
   bg: string
   color: string
@@ -15,6 +16,8 @@ export const VERDICT_CONFIG: Record<MediaVerdict, VerdictConfig> = {
   likely_ai: {
     short: "IA",
     label: "Probablement IA",
+    description:
+      "Plusieurs indicateurs suggèrent une génération ou une manipulation par IA.",
     icon: "bot",
     bg: "bg-destructive/10",
     color: "text-destructive",
@@ -23,6 +26,8 @@ export const VERDICT_CONFIG: Record<MediaVerdict, VerdictConfig> = {
   likely_real: {
     short: "Réel",
     label: "Probablement réel",
+    description:
+      "Les signaux analysés sont cohérents avec un contenu authentique.",
     icon: "shield-check",
     bg: "bg-primary/10",
     color: "text-primary",
@@ -31,6 +36,8 @@ export const VERDICT_CONFIG: Record<MediaVerdict, VerdictConfig> = {
   uncertain: {
     short: "Incertain",
     label: "Incertain",
+    description:
+      "Les résultats sont mitigés ; une vérification humaine reste recommandée.",
     icon: "help-circle",
     bg: "bg-muted",
     color: "text-muted-foreground",

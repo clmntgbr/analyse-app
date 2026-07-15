@@ -1,6 +1,7 @@
 "use client"
 
 import { useMedia } from "@/lib/media/context"
+import { useStatistics } from "@/lib/statistics/context"
 import { useUser } from "@/lib/user/context"
 import { useCallback, useEffect, useRef } from "react"
 import {
@@ -14,20 +15,24 @@ const REFRESH_DEBOUNCE_MS = 500
 export function MediaCentrifugeListener() {
   const { user, isLoading } = useUser()
   const { fetchMedias } = useMedia()
+  const { fetchStatistics } = useStatistics()
   const fetchMediasRef = useRef(fetchMedias)
+  const fetchStatisticsRef = useRef(fetchStatistics)
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined
   )
 
   fetchMediasRef.current = fetchMedias
+  fetchStatisticsRef.current = fetchStatistics
 
-  const debouncedRefreshMedias = useCallback(() => {
+  const debouncedRefresh = useCallback(() => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current)
     }
 
     debounceTimeoutRef.current = setTimeout(() => {
-      fetchMediasRef.current()
+      void fetchMediasRef.current()
+      void fetchStatisticsRef.current()
     }, REFRESH_DEBOUNCE_MS)
   }, [])
 
@@ -50,9 +55,9 @@ export function MediaCentrifugeListener() {
 
       if (!shouldRefetchMedias(data)) return
 
-      debouncedRefreshMedias()
+      debouncedRefresh()
     },
-    [debouncedRefreshMedias]
+    [debouncedRefresh]
   )
 
   const userId = !isLoading ? user?.id : undefined
