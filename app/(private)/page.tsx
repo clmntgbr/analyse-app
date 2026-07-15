@@ -3,6 +3,7 @@
 import { EmptyComponent } from "@/components/empty"
 import { Header } from "@/components/header"
 import { MediaItem } from "@/components/media-item"
+import { StatCard } from "@/components/statistic-card"
 import { UploadDropzone } from "@/components/upload-dropzone"
 import { useMedia } from "@/lib/media/context"
 import {
@@ -10,8 +11,8 @@ import {
   revokeUploadFilePreviews,
   type UploadFile,
 } from "@/lib/mock-upload"
+import { Bot, ImageIcon, Images, ShieldCheck, TrendingUp } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { ImageIcon } from "lucide-react"
 
 export default function Page() {
   const { medias, uploadFile } = useMedia()
@@ -66,9 +67,34 @@ export default function Page() {
         isSending={isSending}
       />
 
-      <section className="flex flex-col gap-4">
-        <h2 className="text-sm font-semibold text-foreground">Medias</h2>
+      <section className="animate-fade-in grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <StatCard
+          icon={Images}
+          label="Analyses"
+          value={"3"}
+          color="text-primary"
+        />
+        <StatCard
+          icon={ShieldCheck}
+          label="Réelles"
+          value={"1"}
+          color="text-success"
+        />
+        <StatCard
+          icon={Bot}
+          label="Générées IA"
+          value={"2"}
+          color="text-destructive"
+        />
+        <StatCard
+          icon={TrendingUp}
+          label="Score moyen"
+          value={"4.5"}
+          color="text-warning"
+        />
+      </section>
 
+      <section className="flex flex-col gap-4">
         {medias.members.length > 0 ? (
           <ul className="flex flex-col gap-3">
             {medias.members.map((media) => (

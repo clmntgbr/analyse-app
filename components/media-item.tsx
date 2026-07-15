@@ -1,7 +1,6 @@
 "use client"
 
 import { MediaDetailDrawer } from "@/components/media-detail-drawer"
-import { ScoreGauge } from "@/components/score-gauge"
 import { Progress } from "@/components/ui/progress"
 import {
   CONFIDENCE_LABEL,
@@ -141,12 +140,12 @@ export function MediaItem({ item }: MediaItemProps) {
               Analysé
             </span>
           ) : isAnalyzing ? (
-            <ScoreGauge
-              score={progress}
-              size={44}
-              strokeWidth={4}
-              colorVar="--primary"
-            />
+            <span
+              className="inline-flex size-11 items-center justify-center rounded-full bg-primary/10"
+              aria-label="Analyse en cours"
+            >
+              <Loader2 className="size-5 animate-spin text-primary" />
+            </span>
           ) : null}
         </div>
       </div>
