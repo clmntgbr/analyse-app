@@ -14,9 +14,7 @@ export function StatCard({
   return (
     <div className="rounded-2xl border bg-card p-4">
       <Icon className={cn("size-4", color)} />
-      <p className="font-display mt-2 text-2xl font-bold tabular-nums">
-        {value}
-      </p>
+      <p className="mt-2 text-lg font-bold tabular-nums">{value}</p>
       <p className="text-xs text-muted-foreground">{label}</p>
     </div>
   )

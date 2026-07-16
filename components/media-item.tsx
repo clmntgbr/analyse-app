@@ -52,7 +52,7 @@ export function MediaItem({ item }: MediaItemProps) {
       <div
         className={cn(
           "group relative flex cursor-pointer items-center gap-4 rounded-2xl border bg-card p-3 transition-all duration-200",
-          "hover:shadow-sm",
+          "hover:shadow-md",
           isAnalyzing && "border-primary/40",
           isError && "border-destructive/40"
         )}
