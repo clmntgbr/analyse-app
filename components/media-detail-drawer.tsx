@@ -1,9 +1,10 @@
 "use client"
 
-import { Drawer, DrawerContent } from "@/components/ui/drawer"
+import { Drawer, DrawerContent, DrawerTitle } from "@/components/ui/drawer"
 import { useMedia } from "@/lib/media/context"
 import type { Media } from "@/lib/media/types"
 import { useEffect, useState } from "react"
+import { VerdictGauge } from "./verdict-gauge"
 
 interface MediaDetailDrawerProps {
   open: boolean
@@ -35,8 +36,15 @@ export function MediaDetailDrawer({
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange} direction="right">
-      <DrawerContent className="flex h-full w-[50vw]! max-w-[50vw]! flex-col gap-0 overflow-hidden p-0!">
-        {item && <></>}
+      <DrawerContent className="flex h-full w-[30vw]! max-w-[30vw]! flex-col gap-0 overflow-hidden p-0!">
+        <DrawerTitle className="sr-only">
+          {item?.key ?? "Détail du média"}
+        </DrawerTitle>
+        {item && (
+          <>
+            <VerdictGauge verdict={item.verdict} score={item.finalScore} />
+          </>
+        )}
       </DrawerContent>
     </Drawer>
   )

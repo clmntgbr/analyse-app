@@ -48,3 +48,14 @@ export type MediaAction =
   | { type: "GET_MEDIAS"; payload: Paginate<Media> }
   | { type: "GET_MEDIAS_ERROR"; payload: string }
   | { type: "GET_MEDIAS_LOADING"; payload: boolean }
+
+export type AnalysisStatus = "queued" | "analyzing" | "done" | "error"
+
+export type Confiancelabel = "faible" | "moyenne" | "élevée"
+
+export interface Metric {
+  key: string
+  label: string
+  description: string
+  value: number
+}
