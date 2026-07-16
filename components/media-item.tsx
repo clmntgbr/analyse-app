@@ -95,7 +95,7 @@ export function MediaItem({ item }: MediaItemProps) {
 
           <div className="flex flex-wrap items-center gap-2">
             {item.size !== undefined && (
-              <span className="text-xs font-bold text-muted-foreground tabular-nums">
+              <span className="text-sm text-muted-foreground tabular-nums">
                 {formatBytes(item.size)}
               </span>
             )}
@@ -107,14 +107,14 @@ export function MediaItem({ item }: MediaItemProps) {
                 <VerdictBadge verdict={item.verdict} />
                 <ScorePill score={item.finalScore} verdict={item.verdict} />
                 {item.confidence && (
-                  <span className="text-xs font-bold text-muted-foreground tabular-nums">
+                  <span className="text-sm text-muted-foreground tabular-nums">
                     Confiance {CONFIDENCE_LABEL[item.confidence]}
                   </span>
                 )}
               </>
             ) : isAnalyzing ? (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-primary">
+                <span className="text-sm text-primary">
                   {item.status === "processing"
                     ? "Analyse en cours…"
                     : "Préparation…"}
@@ -122,11 +122,11 @@ export function MediaItem({ item }: MediaItemProps) {
                 <Progress value={progress} className="h-1.5 w-24" />
               </div>
             ) : isError ? (
-              <span className="text-xs font-medium text-destructive">
+              <span className="text-sm text-destructive">
                 Erreur d&apos;analyse
               </span>
             ) : (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-sm text-muted-foreground">
                 En file d&apos;attente…
               </span>
             )}

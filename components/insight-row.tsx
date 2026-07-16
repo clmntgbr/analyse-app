@@ -16,9 +16,9 @@ export function InsightRow({
   return (
     <div className="group rounded-xl border bg-card p-3 transition-colors hover:bg-accent/30">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-medium text-foreground">{label}</span>
+        <span className="text-sm font-extrabold text-foreground">{label}</span>
         <span
-          className="text-xs font-bold tabular-nums"
+          className="text-sm tabular-nums"
           style={{ color: `var(${colorVar})` }}
         >
           {value}
@@ -33,9 +33,7 @@ export function InsightRow({
           }}
         />
       </div>
-      <p className="mt-2 text-xs leading-relaxed text-foreground">
-        {description}
-      </p>
+      <p className="mt-2 text-sm text-muted-foreground">{description}</p>
     </div>
   )
 }
