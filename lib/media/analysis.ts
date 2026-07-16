@@ -1,4 +1,9 @@
-import type { MediaConfidence, MediaVerdict } from "./types"
+import type {
+  Insight,
+  InsightKey,
+  MediaConfidence,
+  MediaVerdict,
+} from "./types"
 
 export type VerdictIcon = "shield-check" | "user" | "help-circle" | "bot"
 
@@ -56,6 +61,43 @@ export const CONFIDENCE_LABEL: Record<MediaConfidence, string> = {
   medium: "moyenne",
   high: "élevée",
   unknown: "inconnue",
+}
+
+export interface InsightConfig {
+  label: string
+  description: string
+}
+
+export const INSIGHT_CONFIG: Record<InsightKey, InsightConfig> = {
+  noise: {
+    label: "Bruit",
+    description: "Analyse du bruit résiduel et de sa cohérence spatiale.",
+  },
+  compression: {
+    label: "Compression",
+    description: "Traces de compression et artefacts de quantification.",
+  },
+  frequency: {
+    label: "Fréquences",
+    description: "Répartition des hautes et basses fréquences de l’image.",
+  },
+  histogram: {
+    label: "Histogramme",
+    description: "Distribution des intensités et anomalies statistiques.",
+  },
+}
+
+export const INSIGHT_KEYS = Object.keys(INSIGHT_CONFIG) as InsightKey[]
+
+export function getInsightEntries(
+  insight: Insight
+): { key: InsightKey; value: number; label: string; description: string }[] {
+  return INSIGHT_KEYS.map((key) => ({
+    key,
+    value: insight[key],
+    label: INSIGHT_CONFIG[key].label,
+    description: INSIGHT_CONFIG[key].description,
+  }))
 }
 
 export function getMediaProgress(

@@ -14,7 +14,7 @@ import { Geist_Mono, Inter, Sora, Roboto, Geist } from "next/font/google"
 import "./globals.css"
 import { ui } from '@clerk/ui'
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'})
+const roboto = Roboto({subsets:['latin'],variable:'--font-sans'})
 
 const sora = Sora({ subsets: ["latin"], variable: "--font-display" })
 
@@ -41,7 +41,7 @@ export default function RootLayout({
         "antialiased",
         fontMono.variable,
         "font-sans",
-        geist.variable,
+        roboto.variable,
         sora.variable
       )}
     >

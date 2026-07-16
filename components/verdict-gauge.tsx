@@ -10,7 +10,7 @@ interface VerdictGaugeProps {
 export function VerdictGauge({ verdict, score }: VerdictGaugeProps) {
   if (!verdict || !score) return null
   return (
-    <div className="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-6">
+    <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-6">
       <ScoreGauge
         score={score}
         size={130}

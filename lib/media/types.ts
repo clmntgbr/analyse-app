@@ -14,9 +14,19 @@ export interface Media {
   confidence?: MediaConfidence
   verdict?: MediaVerdict
   signals?: Signal[]
+  insight?: Insight
   createdAt: string
   updatedAt: string
 }
+
+export interface Insight {
+  noise: number
+  compression: number
+  frequency: number
+  histogram: number
+}
+
+export type InsightKey = keyof Insight
 
 export interface Signal {
   id: string
