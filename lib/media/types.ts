@@ -7,6 +7,7 @@ export type MediaStatus = "pending" | "processing" | "analyzed" | "error"
 export interface Media {
   id: string
   key: string
+  filename?: string
   thumbnail: string
   size?: number
   status: MediaStatus

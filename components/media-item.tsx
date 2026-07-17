@@ -90,7 +90,7 @@ export function MediaItem({ item }: MediaItemProps) {
 
         <div className="min-w-0 flex-1 space-y-2">
           <p className="truncate text-sm font-medium text-foreground">
-            {item.key}
+            {item.filename || item.key}
           </p>
 
           <div className="flex flex-wrap items-center gap-2">
