@@ -1,3 +1,4 @@
+import { ModeToggle } from "@/components/mode-toggle"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 import {
@@ -9,12 +10,12 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs"
+import { ui } from "@clerk/ui"
 import { Metadata } from "next"
-import { Geist_Mono, Inter, Sora, Roboto, Geist } from "next/font/google"
+import { Geist_Mono, Roboto, Sora } from "next/font/google"
 import "./globals.css"
-import { ui } from '@clerk/ui'
 
-const roboto = Roboto({subsets:['latin'],variable:'--font-sans'})
+const roboto = Roboto({ subsets: ["latin"], variable: "--font-sans" })
 
 const sora = Sora({ subsets: ["latin"], variable: "--font-display" })
 
@@ -60,6 +61,7 @@ export default function RootLayout({
                 </>
               </SignedOut>
               <SignedIn>
+                <ModeToggle />
                 <UserButton />
                 <SignOutButton />
               </SignedIn>

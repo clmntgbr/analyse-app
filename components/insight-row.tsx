@@ -18,10 +18,10 @@ export function InsightRow({
       <div className="flex items-center justify-between gap-2">
         <span className="text-sm font-extrabold text-foreground">{label}</span>
         <span
-          className="text-sm tabular-nums"
+          className="text-sm font-bold tabular-nums"
           style={{ color: `var(${colorVar})` }}
         >
-          {value}
+          {value.toFixed(1)}
         </span>
       </div>
       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-secondary">
