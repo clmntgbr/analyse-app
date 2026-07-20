@@ -42,6 +42,7 @@ export interface Analysis {
   verdict?: AnalysisVerdict
   filename?: string
   thumbnail?: string
+  insight?: Insight
   medias: Media[]
   createdAt: string
   updatedAt: string

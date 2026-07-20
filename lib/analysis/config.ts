@@ -117,7 +117,10 @@ export function getAnalysisProgress(status: AnalysisStatus): number {
   return 100
 }
 
-export function isVideoMedia(filenameOrKey: string, contentType?: string): boolean {
+export function isVideoMedia(
+  filenameOrKey: string,
+  contentType?: string
+): boolean {
   if (contentType?.startsWith("video/")) return true
   return /\.(mp4|mov|webm)$/i.test(filenameOrKey)
 }

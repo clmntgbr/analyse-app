@@ -39,14 +39,7 @@ export function AnalysisDetailDrawer({
     }
   }, [open, analysisId, fetchAnalysis])
 
-  const insights = item?.medias.flatMap((media) =>
-    media.insight
-      ? getInsightEntries(media.insight).map((insight) => ({
-          ...insight,
-          key: `${media.id}-${insight.key}`,
-        }))
-      : []
-  )
+  const insights = item?.insight ? getInsightEntries(item.insight) : []
 
   return (
     <Drawer open={open} onOpenChange={onOpenChange} direction="right">
@@ -58,7 +51,7 @@ export function AnalysisDetailDrawer({
           <>
             <VerdictGauge verdict={item.verdict} score={item.finalScore} />
             <div className="grid grid-cols-2 gap-4">
-              {insights?.map((insight) => (
+              {insights.map((insight) => (
                 <InsightRow
                   key={insight.key}
                   label={insight.label}
