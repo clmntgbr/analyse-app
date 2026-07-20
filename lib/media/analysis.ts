@@ -66,37 +66,47 @@ export const CONFIDENCE_LABEL: Record<MediaConfidence, string> = {
 export interface InsightConfig {
   label: string
   description: string
+  help?: string
 }
 
 export const INSIGHT_CONFIG: Record<InsightKey, InsightConfig> = {
   noise: {
     label: "Bruit",
     description: "Analyse du bruit résiduel et de sa cohérence spatiale.",
+    help: "Le bruit est une composante indésirable de l’image qui peut être causée par le processus de compression ou par des artefacts de quantification. Il peut être utilisé pour évaluer la qualité de l’image et la présence de compression.",
   },
   compression: {
     label: "Compression",
     description: "Traces de compression et artefacts de quantification.",
+    help: "La compression est un processus qui réduit la taille d’un fichier image en supprimant des informations inutiles. Elle peut être utilisée pour réduire la taille des fichiers et pour améliorer la qualité de l’image.",
   },
   frequency: {
     label: "Fréquences",
     description: "Répartition des hautes et basses fréquences de l’image.",
+    help: "Les hautes fréquences sont des détails fins et les basses fréquences sont des détails grossiers. La fréquence est utilisée pour évaluer la qualité de l’image et la présence de détails.",
   },
   histogram: {
     label: "Histogramme",
     description: "Distribution des intensités et anomalies statistiques.",
+    help: "L’histogramme est un graphique qui montre la distribution des intensités de l’image. Il peut être utilisé pour évaluer la qualité de l’image et la présence d’anomalies statistiques.",
   },
 }
 
 export const INSIGHT_KEYS = Object.keys(INSIGHT_CONFIG) as InsightKey[]
 
-export function getInsightEntries(
-  insight: Insight
-): { key: InsightKey; value: number; label: string; description: string }[] {
+export function getInsightEntries(insight: Insight): {
+  key: InsightKey
+  value: number
+  label: string
+  description: string
+  help?: string
+}[] {
   return INSIGHT_KEYS.map((key) => ({
     key,
     value: insight[key],
     label: INSIGHT_CONFIG[key].label,
     description: INSIGHT_CONFIG[key].description,
+    help: INSIGHT_CONFIG[key].help,
   }))
 }
 

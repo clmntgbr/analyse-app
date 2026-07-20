@@ -53,6 +53,7 @@ export function MediaDetailDrawer({
                     label={insight.label}
                     value={insight.value}
                     description={insight.description}
+                    help={insight.help}
                   />
                 ))}
             </div>
