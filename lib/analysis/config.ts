@@ -137,11 +137,15 @@ export function getAnalysisDisplayName(analysis: {
   return first?.filename || first?.key || "Analyse"
 }
 
+export function getMediaThumbnailUrl(mediaId: string): string {
+  return `/api/medias/${mediaId}/thumbnail`
+}
+
 export function getAnalysisThumbnail(analysis: {
-  thumbnail?: string
-  medias: { thumbnail: string }[]
+  medias: { id: string }[]
 }): string | undefined {
-  return analysis.thumbnail || analysis.medias[0]?.thumbnail
+  const mediaId = analysis.medias[0]?.id
+  return mediaId ? getMediaThumbnailUrl(mediaId) : undefined
 }
 
 export function getAnalysisTotalSize(analysis: {
