@@ -10,7 +10,7 @@ export async function GET() {
     if ("error" in auth) return auth.error
 
     const response = await fetch(
-      `${BACKEND_API_URL}/api/medias?page=1&limit=10&sortBy=created_at&orderBy=desc`,
+      `${BACKEND_API_URL}/api/analyses?page=1&limit=10&sortBy=created_at&orderBy=desc`,
       {
         method: "GET",
         headers: createAuthHeaders(auth.token),

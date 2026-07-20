@@ -1,4 +1,4 @@
-export interface MediaStatistics {
+export interface AnalysisStatistics {
   analysesCount: number
   realImageCount: number
   aiImageCount: number
@@ -6,12 +6,12 @@ export interface MediaStatistics {
 }
 
 export interface StatisticsState {
-  statistics: MediaStatistics | null
+  statistics: AnalysisStatistics | null
   isLoading: boolean
   error: string | null
 }
 
 export type StatisticsAction =
-  | { type: "GET_STATISTICS"; payload: MediaStatistics }
+  | { type: "GET_STATISTICS"; payload: AnalysisStatistics }
   | { type: "GET_STATISTICS_ERROR"; payload: string }
   | { type: "GET_STATISTICS_LOADING"; payload: boolean }

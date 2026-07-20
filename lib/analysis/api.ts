@@ -1,44 +1,44 @@
 import { Paginate } from "../paginate"
 import {
+  Analysis,
   GeneratePresignedUploadUrlDetailResponse,
-  Media,
   PresignUploadInput,
 } from "./types"
 
-export const getMedias = async (): Promise<Paginate<Media>> => {
-  const response = await fetch("/api/medias", {
+export const getAnalyses = async (): Promise<Paginate<Analysis>> => {
+  const response = await fetch("/api/analyses", {
     method: "GET",
   })
 
   if (!response.ok) {
-    throw new Error("Failed to fetch medias")
+    throw new Error("Failed to fetch analyses")
   }
 
   return response.json()
 }
 
-export const getMedia = async (id: string): Promise<Media> => {
-  const response = await fetch(`/api/medias/${id}`, {
+export const getAnalysis = async (id: string): Promise<Analysis> => {
+  const response = await fetch(`/api/analyses/${id}`, {
     method: "GET",
   })
 
   if (!response.ok) {
-    throw new Error("Failed to fetch media")
+    throw new Error("Failed to fetch analysis")
   }
 
-  const payload = (await response.json()) as { data?: Media } | Media
+  const payload = (await response.json()) as { data?: Analysis } | Analysis
 
   if ("data" in payload && payload.data) {
     return payload.data
   }
 
-  return payload as Media
+  return payload as Analysis
 }
 
 export const generatePresignedUploadUrl = async (
   input: PresignUploadInput
 ): Promise<GeneratePresignedUploadUrlDetailResponse> => {
-  const response = await fetch("/api/medias/presign-upload-url", {
+  const response = await fetch("/api/analyses/presign-upload-url", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

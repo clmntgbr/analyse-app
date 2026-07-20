@@ -1,16 +1,19 @@
 "use client"
 
-import { MediaDetailDrawer } from "@/components/media-detail-drawer"
+import { AnalysisDetailDrawer } from "@/components/analysis-detail-drawer"
 import { Progress } from "@/components/ui/progress"
 import {
   CONFIDENCE_LABEL,
   VERDICT_COLOR_VAR,
   VERDICT_CONFIG,
   formatBytes,
-  getMediaProgress,
+  getAnalysisDisplayName,
+  getAnalysisProgress,
+  getAnalysisThumbnail,
+  getAnalysisTotalSize,
   isVideoMedia,
-} from "@/lib/media/analysis"
-import { Media, MediaVerdict } from "@/lib/media/types"
+} from "@/lib/analysis/config"
+import { Analysis, AnalysisVerdict } from "@/lib/analysis/types"
 import { cn } from "@/lib/utils"
 import {
   Bot,
@@ -30,17 +33,24 @@ const ICONS = {
   bot: Bot,
 }
 
-interface MediaItemProps {
-  item: Media
+interface AnalysisItemProps {
+  item: Analysis
 }
 
-export function MediaItem({ item }: MediaItemProps) {
+export function AnalysisItem({ item }: AnalysisItemProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const isVideo = isVideoMedia(item.key)
+  const primaryMedia = item.medias[0]
+  const displayName = getAnalysisDisplayName(item)
+  const thumbnail = getAnalysisThumbnail(item)
+  const size = getAnalysisTotalSize(item)
+  const isVideo = isVideoMedia(
+    primaryMedia?.filename || primaryMedia?.key || displayName,
+    primaryMedia?.contentType
+  )
   const isComplete = item.status === "analyzed" && item.verdict
   const isAnalyzing = item.status === "pending" || item.status === "processing"
   const isError = item.status === "error"
-  const progress = getMediaProgress(item.status)
+  const progress = getAnalysisProgress(item.status)
   const cfg = item.verdict ? VERDICT_CONFIG[item.verdict] : null
 
   const openDrawer = () => {
@@ -67,10 +77,11 @@ export function MediaItem({ item }: MediaItemProps) {
         }}
       >
         <div className="relative flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary">
-          {item.thumbnail ? (
+          {thumbnail ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={item.thumbnail}
-              alt={`Aperçu de ${item.key}`}
+              src={thumbnail}
+              alt={`Aperçu de ${displayName}`}
               className="size-full object-cover"
             />
           ) : isVideo ? (
@@ -90,13 +101,13 @@ export function MediaItem({ item }: MediaItemProps) {
 
         <div className="min-w-0 flex-1 space-y-2">
           <p className="truncate text-sm font-medium text-foreground">
-            {item.filename || item.key}
+            {displayName}
           </p>
 
           <div className="flex flex-wrap items-center gap-2">
-            {item.size !== undefined && (
+            {size !== undefined && (
               <span className="text-sm text-muted-foreground tabular-nums">
-                {formatBytes(item.size)}
+                {formatBytes(size)}
               </span>
             )}
             {isComplete &&
@@ -150,8 +161,8 @@ export function MediaItem({ item }: MediaItemProps) {
         </div>
       </div>
 
-      <MediaDetailDrawer
-        mediaId={item.id}
+      <AnalysisDetailDrawer
+        analysisId={item.id}
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
       />
@@ -159,7 +170,7 @@ export function MediaItem({ item }: MediaItemProps) {
   )
 }
 
-function VerdictBadge({ verdict }: { verdict: MediaVerdict }) {
+function VerdictBadge({ verdict }: { verdict: AnalysisVerdict }) {
   const cfg = VERDICT_CONFIG[verdict]
   const Icon = ICONS[cfg.icon]
 
@@ -183,7 +194,7 @@ function ScorePill({
   verdict,
 }: {
   score: number
-  verdict: MediaVerdict
+  verdict: AnalysisVerdict
 }) {
   const colorVar = VERDICT_COLOR_VAR[verdict]
 

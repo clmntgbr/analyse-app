@@ -1,5 +1,5 @@
-import { MediaCentrifugeListener } from "@/lib/centrifugo/media-centrifuge-listener"
-import { MediaProvider } from "@/lib/media/provider"
+import { AnalysisCentrifugeListener } from "@/lib/centrifugo/analysis-centrifuge-listener"
+import { AnalysisProvider } from "@/lib/analysis/provider"
 import { StatisticsProvider } from "@/lib/statistics/provider"
 import { UserProvider } from "@/lib/user/provider"
 
@@ -10,12 +10,12 @@ export default function PrivateLayout({
 }>) {
   return (
     <UserProvider>
-      <MediaProvider>
+      <AnalysisProvider>
         <StatisticsProvider>
-          <MediaCentrifugeListener />
+          <AnalysisCentrifugeListener />
           <div className="mx-auto bg-background px-0">{children}</div>
         </StatisticsProvider>
-      </MediaProvider>
+      </AnalysisProvider>
     </UserProvider>
   )
 }

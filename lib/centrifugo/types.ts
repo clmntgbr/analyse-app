@@ -1,8 +1,12 @@
-import { MediaConfidence, MediaVerdict, Signal } from "@/lib/media/types"
+import {
+  AnalysisConfidence,
+  AnalysisVerdict,
+  Signal,
+} from "@/lib/analysis/types"
 
 export interface AnalysisStartedEvent {
   type: "analysis_started"
-  mediaId: string
+  analysisId: string
   userId: string
   status: string
   updatedAt: string
@@ -10,16 +14,18 @@ export interface AnalysisStartedEvent {
 
 export interface AnalysisCompletedEvent {
   type: "analysis_completed"
-  mediaId: string
+  analysisId: string
   finalScore: number
-  confidence: MediaConfidence
-  verdict: MediaVerdict
-  signals: Signal[]
+  confidence: AnalysisConfidence
+  verdict: AnalysisVerdict
+  signals?: Signal[]
 }
 
-export type MediaStreamEvent = AnalysisStartedEvent | AnalysisCompletedEvent
+export type AnalysisStreamEvent = AnalysisStartedEvent | AnalysisCompletedEvent
 
-export function isMediaStreamEvent(value: unknown): value is MediaStreamEvent {
+export function isAnalysisStreamEvent(
+  value: unknown
+): value is AnalysisStreamEvent {
   if (!value || typeof value !== "object") return false
 
   const type = (value as { type?: string }).type
@@ -27,8 +33,8 @@ export function isMediaStreamEvent(value: unknown): value is MediaStreamEvent {
   return type === "analysis_started" || type === "analysis_completed"
 }
 
-export function shouldRefetchMedias(
-  event: MediaStreamEvent
+export function shouldRefetchAnalyses(
+  event: AnalysisStreamEvent
 ): event is AnalysisCompletedEvent {
   return event.type === "analysis_completed"
 }

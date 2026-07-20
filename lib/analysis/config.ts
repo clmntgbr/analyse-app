@@ -1,8 +1,9 @@
 import type {
+  AnalysisConfidence,
+  AnalysisStatus,
+  AnalysisVerdict,
   Insight,
   InsightKey,
-  MediaConfidence,
-  MediaVerdict,
 } from "./types"
 
 export type VerdictIcon = "shield-check" | "user" | "help-circle" | "bot"
@@ -17,7 +18,7 @@ export interface VerdictConfig {
   border: string
 }
 
-export const VERDICT_CONFIG: Record<MediaVerdict, VerdictConfig> = {
+export const VERDICT_CONFIG: Record<AnalysisVerdict, VerdictConfig> = {
   likely_ai: {
     short: "IA",
     label: "Probablement IA",
@@ -50,13 +51,13 @@ export const VERDICT_CONFIG: Record<MediaVerdict, VerdictConfig> = {
   },
 }
 
-export const VERDICT_COLOR_VAR: Record<MediaVerdict, string> = {
+export const VERDICT_COLOR_VAR: Record<AnalysisVerdict, string> = {
   likely_real: "--primary",
   uncertain: "--chart-3",
   likely_ai: "--destructive",
 }
 
-export const CONFIDENCE_LABEL: Record<MediaConfidence, string> = {
+export const CONFIDENCE_LABEL: Record<AnalysisConfidence, string> = {
   low: "faible",
   medium: "moyenne",
   high: "élevée",
@@ -110,24 +111,46 @@ export function getInsightEntries(insight: Insight): {
   }))
 }
 
-export function getMediaProgress(
-  status: "pending" | "processing" | "analyzed" | "error"
-): number {
+export function getAnalysisProgress(status: AnalysisStatus): number {
   if (status === "processing") return 66
   if (status === "pending") return 33
   return 100
 }
 
-function isVideoKey(key: string): boolean {
-  return /\.(mp4|mov|webm)$/i.test(key)
-}
-
-export function isVideoMedia(key: string): boolean {
-  return isVideoKey(key)
+export function isVideoMedia(filenameOrKey: string, contentType?: string): boolean {
+  if (contentType?.startsWith("video/")) return true
+  return /\.(mp4|mov|webm)$/i.test(filenameOrKey)
 }
 
 export function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} o`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} Ko`
   return `${(bytes / (1024 * 1024)).toFixed(1)} Mo`
+}
+
+export function getAnalysisDisplayName(analysis: {
+  filename?: string
+  medias: { filename: string; key: string }[]
+}): string {
+  if (analysis.filename) return analysis.filename
+  const first = analysis.medias[0]
+  return first?.filename || first?.key || "Analyse"
+}
+
+export function getAnalysisThumbnail(analysis: {
+  thumbnail?: string
+  medias: { thumbnail: string }[]
+}): string | undefined {
+  return analysis.thumbnail || analysis.medias[0]?.thumbnail
+}
+
+export function getAnalysisTotalSize(analysis: {
+  medias: { size?: number }[]
+}): number | undefined {
+  const sizes = analysis.medias
+    .map((media) => media.size)
+    .filter((size): size is number => size !== undefined)
+
+  if (sizes.length === 0) return undefined
+  return sizes.reduce((total, size) => total + size, 0)
 }

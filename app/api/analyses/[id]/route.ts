@@ -4,21 +4,20 @@ import { NextResponse } from "next/server"
 
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
-export async function POST(request: Request) {
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const auth = await requireAuth()
     if ("error" in auth) return auth.error
 
-    const body = await request.json()
+    const { id } = await params
 
-    const response = await fetch(
-      `${BACKEND_API_URL}/api/media/presign-upload-url`,
-      {
-        method: "POST",
-        headers: createAuthHeaders(auth.token),
-        body: JSON.stringify(body),
-      }
-    )
+    const response = await fetch(`${BACKEND_API_URL}/api/analyses/${id}`, {
+      method: "GET",
+      headers: createAuthHeaders(auth.token, { json: false }),
+    })
 
     if (!response.ok) {
       return NextResponse.json(
@@ -28,8 +27,9 @@ export async function POST(request: Request) {
     }
 
     const data = await response.json()
-    return NextResponse.json(data)
-  } catch {
+    return NextResponse.json({ success: true, data })
+  } catch (error) {
+    console.error("Analysis error:", error)
     return NextResponse.json({ success: false }, { status: 500 })
   }
 }

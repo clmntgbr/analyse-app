@@ -1,7 +1,7 @@
-import { MediaStatistics } from "./types"
+import { AnalysisStatistics } from "./types"
 
-export const getStatistics = async (): Promise<MediaStatistics> => {
-  const response = await fetch("/api/statistics", {
+export const getStatistics = async (): Promise<AnalysisStatistics> => {
+  const response = await fetch("/api/analyses/statistics", {
     method: "GET",
   })
 

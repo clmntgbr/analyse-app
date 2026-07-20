@@ -1,14 +1,14 @@
-import { VERDICT_COLOR_VAR } from "@/lib/media/analysis"
-import { MediaVerdict } from "@/lib/media/types"
+import { VERDICT_COLOR_VAR } from "@/lib/analysis/config"
+import { AnalysisVerdict } from "@/lib/analysis/types"
 import { ScoreGauge } from "./score-gauge"
 
 interface VerdictGaugeProps {
-  verdict: MediaVerdict | undefined
+  verdict: AnalysisVerdict | undefined
   score: number | undefined
 }
 
 export function VerdictGauge({ verdict, score }: VerdictGaugeProps) {
-  if (!verdict || !score) return null
+  if (!verdict || score === undefined) return null
   return (
     <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-6">
       <ScoreGauge

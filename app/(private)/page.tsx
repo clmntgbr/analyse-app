@@ -1,11 +1,11 @@
 "use client"
 
+import { AnalysisItem } from "@/components/analysis-item"
 import { EmptyComponent } from "@/components/empty"
 import { Header } from "@/components/header"
-import { MediaItem } from "@/components/media-item"
 import { StatCard } from "@/components/statistic-card"
 import { UploadDropzone } from "@/components/upload-dropzone"
-import { useMedia } from "@/lib/media/context"
+import { useAnalysis } from "@/lib/analysis/context"
 import {
   createUploadFiles,
   revokeUploadFilePreviews,
@@ -16,7 +16,7 @@ import { Bot, ImageIcon, Images, ShieldCheck, TrendingUp } from "lucide-react"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 export default function Page() {
-  const { medias, uploadFile } = useMedia()
+  const { analyses, uploadFile } = useAnalysis()
   const { statistics } = useStatistics()
   const [pendingFiles, setPendingFiles] = useState<UploadFile[]>([])
   const [isSending, setIsSending] = useState(false)
@@ -91,25 +91,23 @@ export default function Page() {
         <StatCard
           icon={TrendingUp}
           label="Score moyen"
-          value={
-            statistics ? statistics.averageScore.toFixed(1) : "—"
-          }
+          value={statistics ? statistics.averageScore.toFixed(1) : "—"}
           color="text-warning"
         />
       </section>
 
       <section className="flex flex-col gap-4">
-        {medias.members.length > 0 ? (
+        {analyses.members.length > 0 ? (
           <ul className="flex flex-col gap-3">
-            {medias.members.map((media) => (
-              <li key={media.id}>
-                <MediaItem item={media} />
+            {analyses.members.map((analysis) => (
+              <li key={analysis.id}>
+                <AnalysisItem item={analysis} />
               </li>
             ))}
           </ul>
         ) : (
           <EmptyComponent
-            title="Aucun média"
+            title="Aucune analyse"
             description="Dépose un fichier pour lancer une première analyse."
             icon={<ImageIcon className="size-5 text-muted-foreground" />}
           />

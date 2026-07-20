@@ -1,28 +1,25 @@
 "use client"
 
-import { useMedia } from "@/lib/media/context"
+import { useAnalysis } from "@/lib/analysis/context"
 import { useStatistics } from "@/lib/statistics/context"
 import { useUser } from "@/lib/user/context"
 import { useCallback, useEffect, useRef } from "react"
-import {
-  isMediaStreamEvent,
-  shouldRefetchMedias,
-} from "./types"
+import { isAnalysisStreamEvent, shouldRefetchAnalyses } from "./types"
 import { useCentrifuge } from "./use-centrifuge"
 
 const REFRESH_DEBOUNCE_MS = 500
 
-export function MediaCentrifugeListener() {
+export function AnalysisCentrifugeListener() {
   const { user, isLoading } = useUser()
-  const { fetchMedias } = useMedia()
+  const { fetchAnalyses } = useAnalysis()
   const { fetchStatistics } = useStatistics()
-  const fetchMediasRef = useRef(fetchMedias)
+  const fetchAnalysesRef = useRef(fetchAnalyses)
   const fetchStatisticsRef = useRef(fetchStatistics)
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined
   )
 
-  fetchMediasRef.current = fetchMedias
+  fetchAnalysesRef.current = fetchAnalyses
   fetchStatisticsRef.current = fetchStatistics
 
   const debouncedRefresh = useCallback(() => {
@@ -31,7 +28,7 @@ export function MediaCentrifugeListener() {
     }
 
     debounceTimeoutRef.current = setTimeout(() => {
-      void fetchMediasRef.current()
+      void fetchAnalysesRef.current()
       void fetchStatisticsRef.current()
     }, REFRESH_DEBOUNCE_MS)
   }, [])
@@ -46,14 +43,14 @@ export function MediaCentrifugeListener() {
 
   const handlePublication = useCallback(
     (data: unknown) => {
-      if (!isMediaStreamEvent(data)) {
+      if (!isAnalysisStreamEvent(data)) {
         console.warn("[Centrifugo] ignored publication", data)
         return
       }
 
       console.log(data.type, data)
 
-      if (!shouldRefetchMedias(data)) return
+      if (!shouldRefetchAnalyses(data)) return
 
       debouncedRefresh()
     },
