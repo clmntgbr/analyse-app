@@ -1,5 +1,6 @@
 import { ModeToggle } from "@/components/mode-toggle"
 import { ThemeProvider } from "@/components/theme-provider"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import {
   ClerkProvider,
@@ -10,9 +11,9 @@ import {
   SignUpButton,
   UserButton,
 } from "@clerk/nextjs"
-import { ui } from "@clerk/ui"
 import { Metadata } from "next"
 import { Geist_Mono, Roboto, Sora } from "next/font/google"
+import Link from "next/link"
 import "./globals.css"
 
 const roboto = Roboto({ subsets: ["latin"], variable: "--font-sans" })
@@ -47,7 +48,7 @@ export default function RootLayout({
       )}
     >
       <body>
-        <ClerkProvider ui={ui}>
+        <ClerkProvider>
           <ThemeProvider>
             <header className="flex h-16 items-center justify-end gap-4 p-4">
               <SignedOut>
@@ -61,6 +62,12 @@ export default function RootLayout({
                 </>
               </SignedOut>
               <SignedIn>
+                <Link href="/">
+                  <Button variant="ghost">Accueil</Button>
+                </Link>
+                <Link href="/pricing">
+                  <Button variant="ghost">Pricing</Button>
+                </Link>
                 <ModeToggle />
                 <UserButton />
                 <SignOutButton />

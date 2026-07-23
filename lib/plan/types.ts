@@ -1,3 +1,15 @@
+export interface Quota {
+  id: string
+  maxImagesPerMonth: number
+  maxVideosPerMonth: number
+  maxFileSizeImage: number
+  maxFileSizeVideo: number
+  fullPipeline: boolean
+  historyRetention: number
+  createdAt: string
+  updatedAt: string
+}
+
 export interface Plan {
   id: string
   name: string
@@ -7,6 +19,7 @@ export interface Plan {
   description: string
   slug: string
   isActive: boolean
+  quota: Quota
   createdAt: string
   updatedAt: string
 }
