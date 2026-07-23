@@ -19,8 +19,10 @@ export function AnalysisCentrifugeListener() {
     undefined
   )
 
-  fetchAnalysesRef.current = fetchAnalyses
-  fetchStatisticsRef.current = fetchStatistics
+  useEffect(() => {
+    fetchAnalysesRef.current = fetchAnalyses
+    fetchStatisticsRef.current = fetchStatistics
+  }, [fetchAnalyses, fetchStatistics])
 
   const debouncedRefresh = useCallback(() => {
     if (debounceTimeoutRef.current) {
