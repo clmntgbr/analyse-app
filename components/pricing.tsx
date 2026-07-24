@@ -1,5 +1,6 @@
 "use client"
 
+import { PageHero } from "@/components/page-hero"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import { usePlan } from "@/lib/plan/context"
@@ -12,7 +13,7 @@ import {
 } from "@/lib/plan/pricing"
 import { useSubscription } from "@/lib/subscription/context"
 import { cn } from "@/lib/utils"
-import { Check, Loader2, Sparkles, Zap } from "lucide-react"
+import { Check, Loader2, Zap } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
@@ -22,7 +23,7 @@ interface PricingPageProps {
 
 export function Pricing({ onBack }: PricingPageProps) {
   const { plans, isLoading, error } = usePlan()
-  const { createSubscription, isCreating, subscription } = useSubscription()
+  const { createSubscription, isCreating } = useSubscription()
   const [annual, setAnnual] = useState(false)
   const [pendingPlanId, setPendingPlanId] = useState<string | null>(null)
   const interval = annual ? "annually" : "monthly"
@@ -44,36 +45,13 @@ export function Pricing({ onBack }: PricingPageProps) {
 
   return (
     <div className="container mx-auto flex max-w-6xl flex-col gap-8 p-4 pb-20">
-      <section className="relative flex flex-col items-center gap-6 py-12 text-center sm:gap-8 sm:py-16">
-        <div className="bg-grid mask-fade-b pointer-events-none absolute inset-0 -z-10 opacity-40" />
-        <div
-          className="pointer-events-none absolute top-0 left-1/2 -z-10 size-120 -translate-x-1/2 rounded-full opacity-20 blur-3xl"
-          style={{
-            background:
-              "radial-gradient(circle, hsl(var(--primary)), transparent 70%)",
-          }}
-        />
-
-        <div className="animate-fade-in inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-xs font-medium text-muted-foreground">
-          <Sparkles className="size-3 text-primary" />
-          Tarifs simples et transparents
-        </div>
-
-        <h1 className="font-display animate-slide-up max-w-2xl text-3xl leading-tight font-extrabold tracking-tight text-balance text-foreground sm:text-5xl">
-          Choisissez le plan{" "}
-          <span className="bg-linear-to-r from-primary via-blue-500 to-chart-5 bg-clip-text text-transparent">
-            adapté à vos besoins
-          </span>
-        </h1>
-
-        <p
-          className="animate-slide-up max-w-xl text-balance text-muted-foreground sm:text-lg"
-          style={{ animationDelay: "0.05s" }}
-        >
-          Détection d&apos;images IA par multi-modèles. Changez ou annulez à
-          tout moment.
-        </p>
-
+      <PageHero
+        badge="Tarifs simples et transparents"
+        title="Choisissez le plan"
+        highlight="adapté à vos besoins"
+        highlightInline
+        subtitle="Détection d'images IA par multi-modèles. Changez ou annulez à tout moment."
+      >
         {/* Billing toggle */}
         <div
           className="animate-fade-in mt-2 flex items-center gap-3"
@@ -104,7 +82,7 @@ export function Pricing({ onBack }: PricingPageProps) {
             -20%
           </span>
         </div>
-      </section>
+      </PageHero>
 
       {isLoading ? (
         <div className="flex items-center justify-center gap-2 py-20 text-muted-foreground">
@@ -180,7 +158,7 @@ export function Pricing({ onBack }: PricingPageProps) {
                   </p>
                 )}
 
-                <p className="mt-3 min-h-[2.5rem] text-sm text-muted-foreground">
+                <p className="mt-3 min-h-10 text-sm text-muted-foreground">
                   {plan.description}
                 </p>
 
