@@ -96,7 +96,9 @@ export function SubscriptionPage({
   if (!subscription || !plan) {
     return (
       <div className="container mx-auto flex max-w-6xl flex-col items-center gap-4 px-4 py-32 text-center">
-        <p className="text-sm text-muted-foreground">Aucun abonnement trouvé.</p>
+        <p className="text-sm text-muted-foreground">
+          Aucun abonnement trouvé.
+        </p>
         <Button onClick={onGoPricing}>Voir les plans</Button>
       </div>
     )
@@ -207,7 +209,7 @@ export function SubscriptionPage({
           label="Images analysées"
           used={imagesUsed}
           max={imagesMax}
-          unit="img"
+          unit="images analysées"
           delay={0.1}
         />
         {videosMax > 0 ? (
@@ -216,7 +218,7 @@ export function SubscriptionPage({
             label="Vidéos analysées"
             used={videosUsed}
             max={videosMax}
-            unit="vid"
+            unit="vidéos analysées"
             delay={0.15}
           />
         ) : (
@@ -245,7 +247,9 @@ export function SubscriptionPage({
           )}
         >
           <div className="border-b px-6 py-4">
-            <h2 className="font-display text-base font-bold">Détails du plan</h2>
+            <h2 className="font-display text-base font-bold">
+              Détails du plan
+            </h2>
             <p className="text-xs text-muted-foreground">
               Limites et capacités incluses
             </p>
@@ -273,7 +277,11 @@ export function SubscriptionPage({
               icon={Sparkles}
               label="Modèles de détection"
               value={
-                plan.slug === "free" ? "1" : plan.slug === "starter" ? "2" : "4+"
+                plan.slug === "free"
+                  ? "1"
+                  : plan.slug === "starter"
+                    ? "2"
+                    : "4+"
               }
             />
           </div>
@@ -367,10 +375,9 @@ function UsageGauge({
 
   return (
     <Card
-      className="animate-slide-up flex items-center gap-4 p-5"
+      className="animate-slide-up flex flex-row items-center gap-4 rounded-2xl p-5"
       style={{ animationDelay: `${delay}s` }}
     >
-      {/* Ring */}
       <div className="relative size-24 shrink-0">
         <svg className="size-full -rotate-90" viewBox="0 0 100 100">
           <circle
@@ -378,7 +385,7 @@ function UsageGauge({
             cy="50"
             r={radius}
             fill="none"
-            stroke="var(--secondary)"
+            stroke="var(--border)"
             strokeWidth="8"
           />
           <circle
@@ -394,20 +401,19 @@ function UsageGauge({
             className="transition-all duration-700 ease-out"
           />
         </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <div className="absolute inset-0 flex items-center justify-center">
           <span className="font-display text-lg font-bold tabular-nums">
             {Math.round(pct)}%
           </span>
         </div>
       </div>
 
-      {/* Info */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Icon className="size-3.5" />
           {label}
         </div>
-        <p className="mt-1 font-display text-xl font-bold tabular-nums">
+        <p className="font-display mt-1 text-xl font-bold tabular-nums">
           {formatCount(used)}
           <span className="text-sm font-normal text-muted-foreground">
             {" "}
@@ -420,8 +426,8 @@ function UsageGauge({
             isCritical
               ? "text-destructive"
               : isWarning
-                ? "text-warning"
-                : "text-success"
+                ? "text-amber-600"
+                : "text-emerald-600"
           )}
         >
           {isCritical
@@ -449,15 +455,15 @@ function QuotaCard({
 }) {
   return (
     <Card
-      className="animate-slide-up flex items-center gap-4 p-5"
+      className="animate-slide-up flex flex-row items-center gap-4 rounded-2xl p-5"
       style={{ animationDelay: `${delay}s` }}
     >
-      <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-secondary text-muted-foreground">
+      <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
         <Icon className="size-5" />
       </div>
       <div className="min-w-0">
         <p className="text-sm text-muted-foreground">{label}</p>
-        <p className="mt-0.5 font-display text-lg font-bold">{value}</p>
+        <p className="font-display mt-0.5 text-lg font-bold">{value}</p>
       </div>
     </Card>
   )

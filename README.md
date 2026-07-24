@@ -1,147 +1,157 @@
-# Next.js Starter Template (Clerk + shadcn/ui)
+# Analyse App
 
-Production-ready Next.js App Router template with:
-
-- Clerk authentication (route protection + server auth helpers)
-- Tailwind CSS v4 + shadcn/ui components
-- Theme management (system/light/dark)
-- A minimal user state layer wired to a protected API route
-
-Use this repository as a clean base for authenticated SaaS or internal apps.
+Frontend Next.js for AI-generated image detection: upload media, run multi-model analysis, manage subscription plans and usage quotas.
 
 ## Stack
 
-- Next.js 16 (App Router, Turbopack in dev)
-- React 19 + TypeScript (strict mode)
-- Clerk for auth
-- Tailwind CSS 4
-- shadcn/ui + Radix primitives
-- ESLint + Prettier
+- **Next.js 16** (App Router, Turbopack in dev)
+- **React 19** + TypeScript
+- **Clerk** — authentication & route protection
+- **Stripe** — checkout + customer billing portal (via backend)
+- **Centrifugo** — realtime events (analysis completion, payment success/failure)
+- **Tailwind CSS 4** + **shadcn/ui**
+- **Sonner** — toasts
+
+## Features
+
+- Upload & analyse images (presigned upload → backend pipeline)
+- Analysis history + statistics dashboard
+- Realtime updates over Centrifugo (`users:{userId}` channel)
+- Pricing plans (monthly / annually) with Stripe Checkout
+- Subscription page: plan, quota usage gauges, Stripe portal
+- Payment success / cancel flows with auto-redirect
 
 ## Getting Started
 
-### 1) Install dependencies
+### 1) Install
 
 ```bash
 npm install
 ```
 
-### 2) Configure environment variables
+### 2) Environment
 
-Create a `.env.local` file at the project root:
+Copy `.env.dist` to `.env.local` and fill in:
 
 ```bash
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_xxx
 CLERK_SECRET_KEY=sk_test_xxx
 NEXT_PUBLIC_BACKEND_API_URL=http://localhost:4000
+BACKEND_API_URL=http://localhost:4000
+NEXT_PUBLIC_CENTRIFUGO_URL=ws://localhost:8000/connection/websocket
 ```
 
-Notes:
+| Variable | Role |
+| --- | --- |
+| `NEXT_PUBLIC_CLERK_*` / `CLERK_SECRET_KEY` | Clerk auth |
+| `NEXT_PUBLIC_BACKEND_API_URL` / `BACKEND_API_URL` | Backend API base URL (proxied by Next routes) |
+| `NEXT_PUBLIC_CENTRIFUGO_URL` | WebSocket endpoint for realtime |
 
-- `NEXT_PUBLIC_BACKEND_API_URL` is used by the protected route at `/api/dee593b110504cd6b99541539649944b`.
-- Clerk keys are required by `ClerkProvider`, middleware auth protection, and server-side token retrieval.
-
-### 3) Run development server
+### 3) Run
 
 ```bash
 npm run dev
 ```
 
-The app starts on [http://localhost:3001](http://localhost:3001).
+App: [http://localhost:3001](http://localhost:3001)
 
 ## Scripts
 
-- `npm run dev`: start Next.js dev server on port `3001` with Turbopack
-- `npm run build`: production build
-- `npm run start`: start production server
-- `npm run lint`: run ESLint
-- `npm run typecheck`: run TypeScript checks
-- `npm run format`: format `ts`/`tsx` files with Prettier
+| Command | Description |
+| --- | --- |
+| `npm run dev` | Dev server on port `3001` (Turbopack) |
+| `npm run build` | Production build |
+| `npm run start` | Production server |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | TypeScript (`tsc --noEmit`) |
+| `npm run format` | Prettier on `ts`/`tsx` |
+
+## Pages
+
+| Route | Description |
+| --- | --- |
+| `/` | Detector: upload + analysis list + stats |
+| `/pricing` | Plan selection → Stripe Checkout |
+| `/subscription` | Current plan, quota usage, Stripe portal |
+| `/subscription/success` | Post-checkout success (auto-redirect ~10s) |
+| `/subscription/cancel` | Checkout cancelled / declined |
 
 ## Project Structure
 
 ```text
 app/
-  layout.tsx                         # Root layout (Clerk + theme + header auth UI)
+  layout.tsx                 # Clerk, theme, nav, Toaster
   (private)/
-    layout.tsx                       # Private section providers (theme + user state)
-    page.tsx                         # Example private page, prints current user payload
-  api/
-    dee593b110504cd6b99541539649944b/
-      route.ts                       # Protected proxy route to backend /api/users/me
+    layout.tsx               # Providers + Centrifugo listener
+    page.tsx                 # Home / detector
+    pricing/page.tsx
+    subscription/
+      page.tsx               # Manage subscription
+      success/page.tsx
+      cancel/page.tsx
+  api/                       # Auth-proxied routes → backend
+    analyses/
+    medias/[id]/thumbnail/
+    plans/
+    realtime/connection/
+    subscription/            # GET current subscription
+    subscriptions/           # POST create checkout
+    subscriptions/portal/    # POST Stripe portal session
+    user/
 
 components/
-  theme-provider.tsx                 # App theme provider + "D" keyboard toggle
-  ui/
-    button.tsx                       # shadcn/ui button
+  page-hero.tsx              # Shared hero (badge + gradient title)
+  pricing.tsx
+  subscription-page.tsx
+  payment-success.tsx
+  payment-cancel.tsx
+  upload-dropzone.tsx
+  analysis-item.tsx
+  ui/                        # shadcn primitives
 
 lib/
-  require-auth.ts                    # Server helper: validate Clerk session + token
-  create-auth-headers.ts             # Helper for Authorization headers
+  analysis/                  # Analyses state (provider / api / types)
+  plan/                      # Plans + pricing helpers
+  subscription/              # Subscription state + Stripe helpers
+  statistics/
   user/
-    api.ts                           # Client fetcher for the protected user endpoint
-    context.tsx                      # User context + useUser hook
-    reducer.tsx                      # User state reducer
-    provider.tsx                     # User provider and fetch lifecycle
-    types.ts                         # User and state typings
-  theme/
-    theme-provider.tsx               # Alternative minimal theme provider wrapper
+  centrifugo/                # Token, channel, event listener
+  require-auth.ts            # Server: Clerk session + token
+  create-auth-headers.ts
 ```
 
-## Authentication and Access Control
+## Auth & API proxy
 
-### Global route protection
+`proxy.ts` protects non-public routes with Clerk (`auth.protect()`).
 
-`proxy.ts` uses `clerkMiddleware` and `auth.protect()` to protect non-public routes.
+API routes under `app/api/**` follow the same pattern:
 
-### Server-side auth utility
+1. `requireAuth()` → Clerk token or `401`
+2. Forward to `${BACKEND_API_URL}/api/...` with `Authorization: Bearer <token>`
+3. On error: `{ success: false, data: <backend body> }` + status code
+4. On success: return backend JSON as-is
 
-`lib/require-auth.ts`:
+## Realtime (Centrifugo)
 
-- checks if a user is authenticated
-- reads a Clerk token with `getToken()`
-- returns a ready-to-use error response (`401`) when auth is missing
+`UserCentrifugeListener` (mounted in the private layout) subscribes to `users:{userId}` and reacts to:
 
-### Protected API route pattern
+| Event | Action |
+| --- | --- |
+| `analysis_completed` | Refresh analyses + statistics |
+| `subscription_updated` | Refresh subscription |
+| `payment_succeeded` | Refresh subscription + success toast |
+| `payment_failed` | Refresh subscription + error toast |
 
-`app/api/dee593b110504cd6b99541539649944b/route.ts`:
+Connection token: `GET /api/realtime/connection`.
 
-1. validates auth via `requireAuth()`
-2. forwards request to `${NEXT_PUBLIC_BACKEND_API_URL}/api/users/me`
-3. sends `Authorization: Bearer <clerk_token>`
-4. returns backend payload (or proper error status)
+## Subscription flow
 
-This route acts as a secure server-side proxy between the frontend and your backend API.
+1. User picks a plan on `/pricing` → `POST /api/subscriptions` → redirect to Stripe Checkout
+2. Success URL → `/subscription/success` (short wait + redirect home; toast when Centrifugo fires)
+3. Cancel URL → `/subscription/cancel`
+4. Manage billing: `/subscription` → Stripe Customer Portal (`POST /api/subscriptions/portal`) when `stripeCustomerId` is set
 
-## User State Flow
+## Theme
 
-The private area uses a `UserProvider`:
-
-1. client calls `GET /api/dee593b110504cd6b99541539649944b`
-2. reducer updates `isLoading`, `user`, and `error`
-3. page-level components consume state via `useUser()`
-
-Current demo in `app/(private)/page.tsx` renders the user JSON payload.
-
-## UI and Theme
-
-- Theme is handled with `next-themes`.
-- `components/theme-provider.tsx` adds a keyboard shortcut:
-  - press `D` to toggle dark/light mode (ignored while typing in form fields).
-- Root header in `app/layout.tsx` shows Clerk auth controls:
-  - signed out: Sign In / Sign Up
-  - signed in: User button / Sign Out
-
-## shadcn/ui Usage
-
-### Add a component
-
-```bash
-npx shadcn@latest add button
-```
-
-### Import a component
-
-```tsx
-import { Button } from "@/components/ui/button"
-```
+- `next-themes` (system / light / dark)
+- Press `D` to toggle (ignored while typing in inputs)
