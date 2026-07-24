@@ -52,7 +52,6 @@ export function Pricing({ onBack }: PricingPageProps) {
         highlightInline
         subtitle="Détection d'images IA par multi-modèles. Changez ou annulez à tout moment."
       >
-        {/* Billing toggle */}
         <div
           className="animate-fade-in mt-2 flex items-center gap-3"
           style={{ animationDelay: "0.1s" }}

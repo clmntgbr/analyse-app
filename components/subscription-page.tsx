@@ -121,14 +121,12 @@ export function SubscriptionPage({
 
   return (
     <div className="container mx-auto max-w-6xl p-4 pb-20">
-      {/* ── Hero ── */}
       <PageHero
         badge="Votre espace abonnement"
         title="Gérez votre"
         highlight="abonnement en un coup d'œil"
       />
 
-      {/* ── Plan banner ── */}
       <section className="animate-slide-up relative overflow-hidden rounded-3xl border border-primary/20">
         <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-primary/5 to-transparent" />
         <div className="pointer-events-none absolute -top-20 -right-20 size-72 rounded-full bg-primary/15 blur-3xl" />
@@ -170,7 +168,6 @@ export function SubscriptionPage({
             </div>
           </div>
 
-          {/* Renouvellement */}
           <div className="flex shrink-0 flex-col gap-3 rounded-2xl border border-border/60 bg-card/80 p-4 backdrop-blur-sm lg:w-64">
             <div className="flex items-center gap-2 text-sm font-medium">
               <CalendarClock className="size-4 text-primary" />
@@ -202,7 +199,6 @@ export function SubscriptionPage({
         </div>
       </section>
 
-      {/* ── Usage gauges ── */}
       <section className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <UsageGauge
           icon={FileStack}
@@ -237,9 +233,7 @@ export function SubscriptionPage({
         />
       </section>
 
-      {/* ── Quota details + portal ── */}
       <section className="mt-5 grid gap-4 lg:grid-cols-5">
-        {/* Quota details */}
         <Card
           className={cn(
             "animate-slide-up overflow-hidden p-0",
@@ -287,7 +281,6 @@ export function SubscriptionPage({
           </div>
         </Card>
 
-        {/* Stripe portal */}
         {hasPortal && (
           <Card className="animate-slide-up flex flex-col justify-between overflow-hidden p-0 lg:col-span-2">
             <div className="relative flex flex-col gap-3 p-6">
@@ -323,7 +316,6 @@ export function SubscriptionPage({
         )}
       </section>
 
-      {/* ── Actions ── */}
       <div
         className="animate-fade-in mt-6 flex flex-col gap-3 sm:flex-row"
         style={{ animationDelay: "0.3s" }}
@@ -345,7 +337,6 @@ export function SubscriptionPage({
   )
 }
 
-/* ── Circular usage gauge ── */
 function UsageGauge({
   icon: Icon,
   label,
@@ -441,7 +432,6 @@ function UsageGauge({
   )
 }
 
-/* ── Simple quota card (no progress) ── */
 function QuotaCard({
   icon: Icon,
   label,
@@ -469,7 +459,6 @@ function QuotaCard({
   )
 }
 
-/* ── Detail row ── */
 function DetailRow({
   icon: Icon,
   label,
