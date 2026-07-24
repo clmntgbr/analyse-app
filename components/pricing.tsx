@@ -44,12 +44,10 @@ export function Pricing({ onBack }: PricingPageProps) {
 
   return (
     <div className="container mx-auto flex max-w-6xl flex-col gap-8 p-4 pb-20">
-      {JSON.stringify(subscription)}
-      {/* Hero */}
       <section className="relative flex flex-col items-center gap-6 py-12 text-center sm:gap-8 sm:py-16">
         <div className="bg-grid mask-fade-b pointer-events-none absolute inset-0 -z-10 opacity-40" />
         <div
-          className="pointer-events-none absolute top-0 left-1/2 -z-10 size-[480px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
+          className="pointer-events-none absolute top-0 left-1/2 -z-10 size-120 -translate-x-1/2 rounded-full opacity-20 blur-3xl"
           style={{
             background:
               "radial-gradient(circle, hsl(var(--primary)), transparent 70%)",

@@ -98,7 +98,7 @@ export function getQuotaFeatures(quota: Quota): string[] {
   return features
 }
 
-function formatBytes(bytes: number): string {
+export function formatBytes(bytes: number): string {
   if (bytes <= 0) return "—"
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} Ko`
   if (bytes < 1024 * 1024 * 1024) {
@@ -107,8 +107,12 @@ function formatBytes(bytes: number): string {
   return `${(bytes / (1024 * 1024 * 1024)).toFixed(0)} Go`
 }
 
+export function formatCount(value: number): string {
+  return value.toLocaleString("fr-FR")
+}
+
 /** Go duration in nanoseconds → human label */
-function formatRetention(nanoseconds: number): string {
+export function formatRetention(nanoseconds: number): string {
   const days = nanoseconds / (24 * 60 * 60 * 1e9)
 
   if (days >= 365) {

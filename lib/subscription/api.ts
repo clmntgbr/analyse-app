@@ -5,7 +5,7 @@ import {
 } from "./types"
 
 export const getSubscription = async (): Promise<Subscription | null> => {
-  const response = await fetch("/api/user/subscription", {
+  const response = await fetch("/api/subscription", {
     method: "GET",
   })
 
@@ -25,7 +25,7 @@ export const getSubscription = async (): Promise<Subscription | null> => {
     return payload.data ?? null
   }
 
-  return payload
+  return payload as Subscription
 }
 
 export const createSubscription = async (
@@ -45,3 +45,19 @@ export const createSubscription = async (
 
   return response.json()
 }
+
+export const createBillingPortalSession =
+  async (): Promise<CreateSubscriptionResponse> => {
+    const response = await fetch("/api/subscriptions/portal", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to create billing portal session")
+    }
+
+    return response.json()
+  }

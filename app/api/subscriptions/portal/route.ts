@@ -1,9 +1,8 @@
 import { createAuthHeaders } from "@/lib/create-auth-headers"
-import { getBackendApiUrl } from "@/lib/get-backend-api-url"
 import { requireAuth } from "@/lib/require-auth"
 import { NextResponse } from "next/server"
 
-export const dynamic = "force-dynamic"
+const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL
 
 export async function GET() {
   try {
@@ -11,11 +10,10 @@ export async function GET() {
     if ("error" in auth) return auth.error
 
     const response = await fetch(
-      `${getBackendApiUrl()}/api/realtime/connection`,
+      `${BACKEND_API_URL}/api/subscriptions/portal`,
       {
         method: "GET",
         headers: createAuthHeaders(auth.token),
-        cache: "no-store",
       }
     )
 
@@ -28,8 +26,7 @@ export async function GET() {
 
     const data = await response.json()
     return NextResponse.json(data)
-  } catch (error) {
-    console.error("Realtime connection token error:", error)
+  } catch {
     return NextResponse.json({ success: false }, { status: 500 })
   }
 }

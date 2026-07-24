@@ -69,6 +69,9 @@ export default function RootLayout({
                 <Link href="/pricing">
                   <Button variant="ghost">Pricing</Button>
                 </Link>
+                <Link href="/subscription">
+                  <Button variant="ghost">Abonnement</Button>
+                </Link>
                 <ModeToggle />
                 <UserButton />
                 <SignOutButton />
