@@ -16,6 +16,8 @@ import {
 } from "lucide-react"
 import { useEffect } from "react"
 
+const REDIRECT_DELAY_MS = 5000
+
 interface PaymentSuccessProps {
   onGoDetect: () => void
   onGoPricing: () => void
@@ -40,6 +42,14 @@ export function PaymentSuccess({
   useEffect(() => {
     void fetchSubscription()
   }, [fetchSubscription])
+
+  // Redirect to the detector after a short delay: the subscription will be
+  // reconciled globally there, avoiding a stuck state if the Centrifugo
+  // "payment_succeeded" event was missed during the Stripe redirect.
+  useEffect(() => {
+    const timeout = setTimeout(onGoDetect, REDIRECT_DELAY_MS)
+    return () => clearTimeout(timeout)
+  }, [onGoDetect])
 
   useEffect(() => {
     return () => {
@@ -83,6 +93,9 @@ export function PaymentSuccess({
               : plan
                 ? `Votre abonnement ${plan.name} est maintenant actif. Bienvenue.`
                 : "Votre abonnement est maintenant actif. Bienvenue."}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Redirection automatique dans quelques secondes…
           </p>
         </div>
       </section>
