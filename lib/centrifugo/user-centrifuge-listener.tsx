@@ -57,12 +57,12 @@ export function UserCentrifugeListener() {
   }, [])
 
   const handlePublication = useCallback((data: unknown) => {
+    console.log("[Centrifugo] event received", data)
+
     if (!isUserStreamEvent(data)) {
-      console.warn("[Centrifugo] ignored publication", data)
+      console.warn("[Centrifugo] ignored publication (unknown type)", data)
       return
     }
-
-    console.log(data.type, data)
 
     if (shouldRefetchAnalyses(data)) {
       debouncedRefreshAnalyses()

@@ -14,14 +14,12 @@ import { createBillingPortalSession } from "@/lib/subscription/api"
 import { useSubscription } from "@/lib/subscription/context"
 import { cn } from "@/lib/utils"
 import {
-  ArrowUpRight,
   CalendarClock,
   CreditCard,
   ExternalLink,
   FileStack,
   HardDrive,
   Loader2,
-  RefreshCw,
   Sparkles,
   TrendingUp,
   Video,
@@ -41,13 +39,16 @@ const STATUS_LABELS: Record<string, string> = {
 }
 
 const STATUS_BG: Record<string, string> = {
-  active: "border-success/30 bg-success/10 text-success",
-  trialing: "border-primary/30 bg-primary/10 text-primary",
-  past_due: "border-warning/30 bg-warning/10 text-warning",
-  unpaid: "border-destructive/30 bg-destructive/10 text-destructive",
+  active:
+    "border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-400",
+  trialing: "border-sky-500/40 bg-sky-500/15 text-sky-700 dark:text-sky-400",
+  past_due:
+    "border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-400",
+  unpaid: "border-red-500/40 bg-red-500/15 text-red-700 dark:text-red-400",
   canceled: "border-border bg-muted text-muted-foreground",
   cancelled: "border-border bg-muted text-muted-foreground",
-  incomplete: "border-warning/30 bg-warning/10 text-warning",
+  incomplete:
+    "border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-400",
   incomplete_expired: "border-border bg-muted text-muted-foreground",
 }
 
@@ -127,16 +128,11 @@ export function SubscriptionPage({
         highlight="abonnement en un coup d'œil"
       />
 
-      <section className="animate-slide-up relative overflow-hidden rounded-3xl border border-primary/20">
-        <div className="absolute inset-0 bg-linear-to-br from-primary/10 via-primary/5 to-transparent" />
-        <div className="pointer-events-none absolute -top-20 -right-20 size-72 rounded-full bg-primary/15 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-32 -left-10 size-64 rounded-full bg-chart-2/10 blur-3xl" />
-
+      <section className="animate-slide-up relative overflow-hidden rounded-3xl border border-border">
         <div className="relative flex flex-col gap-6 p-6 sm:p-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2">
               <Badge
-                variant="outline"
                 className={cn("gap-1.5 border", STATUS_BG[subscription.status])}
               >
                 <span className="size-1.5 rounded-full bg-current" />
@@ -168,7 +164,7 @@ export function SubscriptionPage({
             </div>
           </div>
 
-          <div className="flex shrink-0 flex-col gap-3 rounded-2xl border border-border/60 bg-card/80 p-4 backdrop-blur-sm lg:w-64">
+          <div className="flex shrink-0 flex-col gap-3 rounded-2xl border border-border bg-card/80 p-4 backdrop-blur-sm lg:w-64">
             <div className="flex items-center gap-2 text-sm font-medium">
               <CalendarClock className="size-4 text-primary" />
               Prochain renouvellement
@@ -236,11 +232,11 @@ export function SubscriptionPage({
       <section className="mt-5 grid gap-4 lg:grid-cols-5">
         <Card
           className={cn(
-            "animate-slide-up overflow-hidden p-0",
+            "animate-slide-up overflow-hidden border border-border p-0 ring-0",
             hasPortal ? "lg:col-span-3" : "lg:col-span-5"
           )}
         >
-          <div className="border-b px-6 py-4">
+          <div className="border-b border-border px-6 py-4">
             <h2 className="font-display text-base font-bold">
               Détails du plan
             </h2>
@@ -282,7 +278,7 @@ export function SubscriptionPage({
         </Card>
 
         {hasPortal && (
-          <Card className="animate-slide-up flex flex-col justify-between overflow-hidden p-0 lg:col-span-2">
+          <Card className="animate-slide-up flex flex-col justify-between overflow-hidden border border-border p-0 ring-0 lg:col-span-2">
             <div className="relative flex flex-col gap-3 p-6">
               <div className="pointer-events-none absolute top-0 right-0 size-40 rounded-bl-full bg-primary/5" />
               <div className="relative flex size-11 items-center justify-center rounded-xl bg-[#635bff]/10 text-[#635bff]">
@@ -298,7 +294,7 @@ export function SubscriptionPage({
                 </p>
               </div>
             </div>
-            <div className="border-t p-4">
+            <div className="border-t border-border p-4">
               <Button
                 onClick={handleOpenPortal}
                 disabled={portalLoading}
@@ -315,24 +311,6 @@ export function SubscriptionPage({
           </Card>
         )}
       </section>
-
-      <div
-        className="animate-fade-in mt-6 flex flex-col gap-3 sm:flex-row"
-        style={{ animationDelay: "0.3s" }}
-      >
-        <Button variant="outline" className="flex-1" onClick={onGoPricing}>
-          <RefreshCw className="size-4" />
-          Changer de plan
-          <ArrowUpRight className="size-3.5 text-muted-foreground" />
-        </Button>
-        <Button
-          variant="ghost"
-          className="flex-1 text-muted-foreground"
-          onClick={onGoDetect}
-        >
-          Retour au détecteur
-        </Button>
-      </div>
     </div>
   )
 }
@@ -366,7 +344,7 @@ function UsageGauge({
 
   return (
     <Card
-      className="animate-slide-up flex flex-row items-center gap-4 rounded-2xl p-5"
+      className="animate-slide-up flex flex-row items-center gap-4 rounded-2xl border border-border p-5 ring-0"
       style={{ animationDelay: `${delay}s` }}
     >
       <div className="relative size-24 shrink-0">
@@ -445,7 +423,7 @@ function QuotaCard({
 }) {
   return (
     <Card
-      className="animate-slide-up flex flex-row items-center gap-4 rounded-2xl p-5"
+      className="animate-slide-up flex flex-row items-center gap-4 rounded-2xl border border-border p-5 ring-0"
       style={{ animationDelay: `${delay}s` }}
     >
       <div className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">
@@ -471,7 +449,7 @@ function DetailRow({
   valueClass?: string
 }) {
   return (
-    <div className="flex items-center justify-between border-b border-border/40 px-6 py-3.5 last:border-b-0">
+    <div className="flex items-center justify-between border-b border-border px-6 py-3.5 last:border-b-0">
       <span className="flex items-center gap-2.5 text-sm text-muted-foreground">
         <Icon className="size-4 text-muted-foreground/70" />
         {label}
