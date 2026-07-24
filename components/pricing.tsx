@@ -61,7 +61,7 @@ export function Pricing({ onBack }: PricingPageProps) {
 
         <h1 className="font-display animate-slide-up max-w-2xl text-3xl leading-tight font-extrabold tracking-tight text-balance text-foreground sm:text-5xl">
           Choisissez le plan{" "}
-          <span className="bg-linear-to-r from-primary to-chart-5 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-primary via-blue-500 to-chart-5 bg-clip-text text-transparent">
             adapté à vos besoins
           </span>
         </h1>
