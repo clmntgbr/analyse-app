@@ -2,19 +2,24 @@
 
 import { useAnalysis } from "@/lib/analysis/context"
 import { useStatistics } from "@/lib/statistics/context"
+import { useSubscription } from "@/lib/subscription/context"
 import { useUser } from "@/lib/user/context"
 import { useCallback, useEffect, useRef } from "react"
-import { isAnalysisStreamEvent, shouldRefetchAnalyses } from "./types"
+import { isUserStreamEvent, shouldRefetchAnalyses } from "./types"
 import { useCentrifuge } from "./use-centrifuge"
 
 const REFRESH_DEBOUNCE_MS = 500
 
-export function AnalysisCentrifugeListener() {
+export function UserCentrifugeListener() {
   const { user, isLoading } = useUser()
   const { fetchAnalyses } = useAnalysis()
   const { fetchStatistics } = useStatistics()
+  const { fetchSubscription, markPaymentSucceeded } = useSubscription()
+
   const fetchAnalysesRef = useRef(fetchAnalyses)
   const fetchStatisticsRef = useRef(fetchStatistics)
+  const fetchSubscriptionRef = useRef(fetchSubscription)
+  const markPaymentSucceededRef = useRef(markPaymentSucceeded)
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined
   )
@@ -22,9 +27,16 @@ export function AnalysisCentrifugeListener() {
   useEffect(() => {
     fetchAnalysesRef.current = fetchAnalyses
     fetchStatisticsRef.current = fetchStatistics
-  }, [fetchAnalyses, fetchStatistics])
+    fetchSubscriptionRef.current = fetchSubscription
+    markPaymentSucceededRef.current = markPaymentSucceeded
+  }, [
+    fetchAnalyses,
+    fetchStatistics,
+    fetchSubscription,
+    markPaymentSucceeded,
+  ])
 
-  const debouncedRefresh = useCallback(() => {
+  const debouncedRefreshAnalyses = useCallback(() => {
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current)
     }
@@ -43,21 +55,29 @@ export function AnalysisCentrifugeListener() {
     }
   }, [])
 
-  const handlePublication = useCallback(
-    (data: unknown) => {
-      if (!isAnalysisStreamEvent(data)) {
-        console.warn("[Centrifugo] ignored publication", data)
-        return
-      }
+  const handlePublication = useCallback((data: unknown) => {
+    if (!isUserStreamEvent(data)) {
+      console.warn("[Centrifugo] ignored publication", data)
+      return
+    }
 
-      console.log(data.type, data)
+    console.log(data.type, data)
 
-      if (!shouldRefetchAnalyses(data)) return
+    if (shouldRefetchAnalyses(data)) {
+      debouncedRefreshAnalyses()
+      return
+    }
 
-      debouncedRefresh()
-    },
-    [debouncedRefresh]
-  )
+    if (data.type === "subscription_updated") {
+      void fetchSubscriptionRef.current()
+      return
+    }
+
+    if (data.type === "payment_succeeded") {
+      void fetchSubscriptionRef.current()
+      markPaymentSucceededRef.current()
+    }
+  }, [debouncedRefreshAnalyses])
 
   const userId = !isLoading ? user?.id : undefined
 

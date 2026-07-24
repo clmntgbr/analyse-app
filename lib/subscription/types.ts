@@ -24,6 +24,7 @@ export interface SubscriptionState {
   subscription: Subscription | null
   isLoading: boolean
   isCreating: boolean
+  paymentSucceeded: boolean
   error: string | null
 }
 
@@ -34,3 +35,5 @@ export type SubscriptionAction =
   | { type: "CREATE_SUBSCRIPTION_LOADING"; payload: boolean }
   | { type: "CREATE_SUBSCRIPTION_ERROR"; payload: string | null }
   | { type: "CREATE_SUBSCRIPTION_SUCCESS" }
+  | { type: "PAYMENT_SUCCEEDED" }
+  | { type: "RESET_PAYMENT_SUCCEEDED" }

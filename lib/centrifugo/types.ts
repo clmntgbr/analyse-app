@@ -21,20 +21,37 @@ export interface AnalysisCompletedEvent {
   signals?: Signal[]
 }
 
-export type AnalysisStreamEvent = AnalysisStartedEvent | AnalysisCompletedEvent
+export interface SubscriptionUpdatedEvent {
+  type: "subscription_updated"
+  userId?: string
+}
 
-export function isAnalysisStreamEvent(
-  value: unknown
-): value is AnalysisStreamEvent {
+export interface PaymentSucceededEvent {
+  type: "payment_succeeded"
+  userId?: string
+}
+
+export type UserStreamEvent =
+  | AnalysisStartedEvent
+  | AnalysisCompletedEvent
+  | SubscriptionUpdatedEvent
+  | PaymentSucceededEvent
+
+export function isUserStreamEvent(value: unknown): value is UserStreamEvent {
   if (!value || typeof value !== "object") return false
 
   const type = (value as { type?: string }).type
 
-  return type === "analysis_started" || type === "analysis_completed"
+  return (
+    type === "analysis_started" ||
+    type === "analysis_completed" ||
+    type === "subscription_updated" ||
+    type === "payment_succeeded"
+  )
 }
 
 export function shouldRefetchAnalyses(
-  event: AnalysisStreamEvent
+  event: UserStreamEvent
 ): event is AnalysisCompletedEvent {
   return event.type === "analysis_completed"
 }

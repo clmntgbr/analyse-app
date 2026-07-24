@@ -13,6 +13,7 @@ const initialState: SubscriptionState = {
   subscription: null,
   isLoading: false,
   isCreating: false,
+  paymentSucceeded: false,
   error: null,
 }
 
@@ -56,6 +57,14 @@ export function SubscriptionProvider({
     []
   )
 
+  const markPaymentSucceeded = useCallback(() => {
+    dispatch({ type: "PAYMENT_SUCCEEDED" })
+  }, [])
+
+  const resetPaymentSucceeded = useCallback(() => {
+    dispatch({ type: "RESET_PAYMENT_SUCCEEDED" })
+  }, [])
+
   useEffect(() => {
     fetchSubscription()
   }, [fetchSubscription])
@@ -66,6 +75,8 @@ export function SubscriptionProvider({
         ...state,
         fetchSubscription,
         createSubscription,
+        markPaymentSucceeded,
+        resetPaymentSucceeded,
       }}
     >
       {children}

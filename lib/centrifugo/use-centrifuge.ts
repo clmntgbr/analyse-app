@@ -21,7 +21,9 @@ export function useCentrifuge(
 ) {
   const onPublicationRef = useRef(onPublication)
 
-  onPublicationRef.current = onPublication
+  useEffect(() => {
+    onPublicationRef.current = onPublication
+  }, [onPublication])
 
   useEffect(() => {
     if (!userId) return

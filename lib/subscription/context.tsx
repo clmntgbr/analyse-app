@@ -11,6 +11,8 @@ export interface SubscriptionContextType extends SubscriptionState {
   createSubscription: (
     planId: string
   ) => Promise<CreateSubscriptionResponse | null>
+  markPaymentSucceeded: () => void
+  resetPaymentSucceeded: () => void
 }
 
 export const SubscriptionContext = createContext<

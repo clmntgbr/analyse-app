@@ -42,6 +42,16 @@ export const subscriptionReducer = (
         isCreating: false,
         error: null,
       }
+    case "PAYMENT_SUCCEEDED":
+      return {
+        ...state,
+        paymentSucceeded: true,
+      }
+    case "RESET_PAYMENT_SUCCEEDED":
+      return {
+        ...state,
+        paymentSucceeded: false,
+      }
     default:
       return state
   }
