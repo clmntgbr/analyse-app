@@ -26,3 +26,6 @@ export const useSubscription = () => {
   }
   return context
 }
+
+/** Safe when Pricing (or others) may render outside SubscriptionProvider. */
+export const useOptionalSubscription = () => useContext(SubscriptionContext)

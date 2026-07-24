@@ -11,24 +11,41 @@ import {
   getPlanForInterval,
   getQuotaFeatures,
 } from "@/lib/plan/pricing"
-import { useSubscription } from "@/lib/subscription/context"
+import { useOptionalSubscription } from "@/lib/subscription/context"
 import { cn } from "@/lib/utils"
-import { Check, Loader2, Zap } from "lucide-react"
+import { BadgeCheck, Check, Loader2, Zap } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
 interface PricingPageProps {
   onBack: () => void
+  /** Current plan slug when authenticated; omit on public pricing. */
+  currentPlanSlug?: string | null
 }
 
-export function Pricing({ onBack }: PricingPageProps) {
+export function Pricing({ onBack, currentPlanSlug }: PricingPageProps) {
   const { plans, isLoading, error } = usePlan()
-  const { createSubscription, isCreating } = useSubscription()
+  const subscriptionContext = useOptionalSubscription()
   const [annual, setAnnual] = useState(false)
   const [pendingPlanId, setPendingPlanId] = useState<string | null>(null)
   const interval = annual ? "annually" : "monthly"
 
+  const createSubscription = subscriptionContext?.createSubscription
+  const isCreating = subscriptionContext?.isCreating ?? false
+  const subscription = subscriptionContext?.subscription ?? null
+
+  const activeSlug =
+    currentPlanSlug ??
+    subscription?.effectivePlan?.slug ??
+    subscription?.plan?.slug ??
+    null
+
   const handleSelectPlan = async (planId: string) => {
+    if (!createSubscription) {
+      toast.error("Connectez-vous pour souscrire à un plan")
+      return
+    }
+
     setPendingPlanId(planId)
     try {
       const result = await createSubscription(planId)
@@ -99,7 +116,8 @@ export function Pricing({ onBack }: PricingPageProps) {
             const plan = getPlanForInterval(plans, slug, interval)
             if (!plan || !meta) return null
 
-            const isHighlight = meta.highlight
+            const isCurrent = activeSlug === slug
+            const isHighlight = meta.highlight && !isCurrent
             const annualPlan = getPlanForInterval(plans, slug, "annually")
             const monthlyEquivalent = annualPlan
               ? annualPlan.price / 12 / 100
@@ -114,26 +132,37 @@ export function Pricing({ onBack }: PricingPageProps) {
                 style={{ animationDelay: `${0.1 + i * 0.05}s` }}
                 className={cn(
                   "animate-slide-up relative flex flex-col rounded-2xl border bg-card p-6",
-                  isHighlight
-                    ? "border-primary shadow-lg ring-1 shadow-primary/10 ring-primary/20"
-                    : "border-border"
+                  isCurrent
+                    ? "border-emerald-500/60 shadow-lg ring-1 shadow-emerald-500/10 ring-emerald-500/25"
+                    : isHighlight
+                      ? "border-primary shadow-lg ring-1 shadow-primary/10 ring-primary/20"
+                      : "border-border"
                 )}
               >
-                {isHighlight && (
+                {isCurrent ? (
                   <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-md">
-                      <Zap className="size-3" />
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white shadow-md">
+                      <BadgeCheck className="size-3 shrink-0" />
+                      Plan actuel
+                    </span>
+                  </div>
+                ) : isHighlight ? (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-md">
+                      <Zap className="size-3 shrink-0" />
                       {meta.tagline}
                     </span>
                   </div>
-                )}
+                ) : null}
 
                 <div className="mt-2">
                   <h3 className="font-display text-xl font-bold">
                     {plan.name}
                   </h3>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    {meta.tagline !== "Le plus populaire" && meta.tagline}
+                    {isCurrent
+                      ? "Votre abonnement en cours"
+                      : meta.tagline !== "Le plus populaire" && meta.tagline}
                   </p>
                 </div>
 
@@ -163,12 +192,16 @@ export function Pricing({ onBack }: PricingPageProps) {
 
                 <Button
                   className="mt-5 w-full"
-                  variant={isHighlight ? "default" : "outline"}
-                  disabled={isCreating}
+                  variant={
+                    isCurrent ? "secondary" : isHighlight ? "default" : "outline"
+                  }
+                  disabled={isCreating || isCurrent}
                   onClick={() => void handleSelectPlan(plan.id)}
                 >
                   {pendingPlanId === plan.id ? (
                     <Loader2 className="size-4 animate-spin" />
+                  ) : isCurrent ? (
+                    "Plan actuel"
                   ) : (
                     meta.cta
                   )}
@@ -182,13 +215,17 @@ export function Pricing({ onBack }: PricingPageProps) {
                         <span
                           className={cn(
                             "mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full",
-                            isHighlight ? "bg-primary/15" : "bg-primary/10"
+                            isCurrent
+                              ? "bg-emerald-500/15"
+                              : isHighlight
+                                ? "bg-primary/15"
+                                : "bg-primary/10"
                           )}
                         >
                           <Check
                             className={cn(
                               "size-3",
-                              isHighlight ? "text-primary" : "text-primary"
+                              isCurrent ? "text-emerald-600" : "text-primary"
                             )}
                           />
                         </span>
