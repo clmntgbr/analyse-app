@@ -1,0 +1,36 @@
+import type { Plan } from "@/lib/plan/types"
+
+export interface Subscription {
+  id: string
+  status: string
+  stripeCustomerId: string
+  stripeSubscriptionId: string
+  startDate: string
+  endDate: string
+  plan: Plan | null
+  createdAt: string
+  updatedAt: string
+}
+
+export interface CreateSubscriptionRequest {
+  planId: string
+}
+
+export interface CreateSubscriptionResponse {
+  url: string
+}
+
+export interface SubscriptionState {
+  subscription: Subscription | null
+  isLoading: boolean
+  isCreating: boolean
+  error: string | null
+}
+
+export type SubscriptionAction =
+  | { type: "GET_SUBSCRIPTION"; payload: Subscription | null }
+  | { type: "GET_SUBSCRIPTION_LOADING"; payload: boolean }
+  | { type: "GET_SUBSCRIPTION_ERROR"; payload: string }
+  | { type: "CREATE_SUBSCRIPTION_LOADING"; payload: boolean }
+  | { type: "CREATE_SUBSCRIPTION_ERROR"; payload: string | null }
+  | { type: "CREATE_SUBSCRIPTION_SUCCESS" }

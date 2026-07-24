@@ -1,0 +1,47 @@
+import {
+  CreateSubscriptionRequest,
+  CreateSubscriptionResponse,
+  Subscription,
+} from "./types"
+
+export const getSubscription = async (): Promise<Subscription | null> => {
+  const response = await fetch("/api/user/subscription", {
+    method: "GET",
+  })
+
+  if (response.status === 404) {
+    return null
+  }
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch subscription")
+  }
+
+  const payload = (await response.json()) as
+    | { data?: Subscription | null }
+    | Subscription
+
+  if ("data" in payload) {
+    return payload.data ?? null
+  }
+
+  return payload
+}
+
+export const createSubscription = async (
+  input: CreateSubscriptionRequest
+): Promise<CreateSubscriptionResponse> => {
+  const response = await fetch("/api/subscriptions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
+  })
+
+  if (!response.ok) {
+    throw new Error("Failed to create subscription")
+  }
+
+  return response.json()
+}

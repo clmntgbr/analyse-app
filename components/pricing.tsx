@@ -10,6 +10,7 @@ import {
   getPlanForInterval,
   getQuotaFeatures,
 } from "@/lib/plan/pricing"
+import { useSubscription } from "@/lib/subscription/context"
 import { cn } from "@/lib/utils"
 import { Check, Loader2, Sparkles, Zap } from "lucide-react"
 import { useState } from "react"
@@ -21,11 +22,29 @@ interface PricingPageProps {
 
 export function Pricing({ onBack }: PricingPageProps) {
   const { plans, isLoading, error } = usePlan()
+  const { createSubscription, isCreating, subscription } = useSubscription()
   const [annual, setAnnual] = useState(false)
+  const [pendingPlanId, setPendingPlanId] = useState<string | null>(null)
   const interval = annual ? "annually" : "monthly"
+
+  const handleSelectPlan = async (planId: string) => {
+    setPendingPlanId(planId)
+    try {
+      const result = await createSubscription(planId)
+      if (!result?.url) {
+        toast.error("Impossible de créer l'abonnement")
+        return
+      }
+
+      window.location.assign(result.url)
+    } finally {
+      setPendingPlanId(null)
+    }
+  }
 
   return (
     <div className="container mx-auto flex max-w-6xl flex-col gap-8 p-4 pb-20">
+      {JSON.stringify(subscription)}
       {/* Hero */}
       <section className="relative flex flex-col items-center gap-6 py-12 text-center sm:gap-8 sm:py-16">
         <div className="bg-grid mask-fade-b pointer-events-none absolute inset-0 -z-10 opacity-40" />
@@ -170,16 +189,14 @@ export function Pricing({ onBack }: PricingPageProps) {
                 <Button
                   className="mt-5 w-full"
                   variant={isHighlight ? "default" : "outline"}
-                  onClick={() => {
-                    toast.success(`Plan ${plan.name} sélectionné`, {
-                      description:
-                        plan.price === 0
-                          ? "Vous pouvez commencer immédiatement."
-                          : "Redirection vers le paiement (mock).",
-                    })
-                  }}
+                  disabled={isCreating}
+                  onClick={() => void handleSelectPlan(plan.id)}
                 >
-                  {meta.cta}
+                  {pendingPlanId === plan.id ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    meta.cta
+                  )}
                 </Button>
 
                 <ul className="mt-6 flex flex-col gap-3">
