@@ -5,6 +5,7 @@ import { useStatistics } from "@/lib/statistics/context"
 import { useSubscription } from "@/lib/subscription/context"
 import { useUser } from "@/lib/user/context"
 import { useCallback, useEffect, useRef } from "react"
+import { toast } from "sonner"
 import { isUserStreamEvent, shouldRefetchAnalyses } from "./types"
 import { useCentrifuge } from "./use-centrifuge"
 
@@ -76,6 +77,17 @@ export function UserCentrifugeListener() {
     if (data.type === "payment_succeeded") {
       void fetchSubscriptionRef.current()
       markPaymentSucceededRef.current()
+      toast.success("Paiement réussi", {
+        description: "Votre abonnement est maintenant actif.",
+      })
+      return
+    }
+
+    if (data.type === "payment_failed") {
+      void fetchSubscriptionRef.current()
+      toast.error("Échec du paiement", {
+        description: "Votre paiement n'a pas pu être traité. Veuillez réessayer.",
+      })
     }
   }, [debouncedRefreshAnalyses])
 

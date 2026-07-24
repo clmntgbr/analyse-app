@@ -1,6 +1,7 @@
 import { ModeToggle } from "@/components/mode-toggle"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Button } from "@/components/ui/button"
+import { Toaster } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 import {
   ClerkProvider,
@@ -74,6 +75,7 @@ export default function RootLayout({
               </SignedIn>
             </header>
             {children}
+            <Toaster richColors />
           </ThemeProvider>
         </ClerkProvider>
       </body>

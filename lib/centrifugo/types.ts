@@ -31,11 +31,17 @@ export interface PaymentSucceededEvent {
   userId?: string
 }
 
+export interface PaymentFailedEvent {
+  type: "payment_failed"
+  userId?: string
+}
+
 export type UserStreamEvent =
   | AnalysisStartedEvent
   | AnalysisCompletedEvent
   | SubscriptionUpdatedEvent
   | PaymentSucceededEvent
+  | PaymentFailedEvent
 
 export function isUserStreamEvent(value: unknown): value is UserStreamEvent {
   if (!value || typeof value !== "object") return false
@@ -46,7 +52,8 @@ export function isUserStreamEvent(value: unknown): value is UserStreamEvent {
     type === "analysis_started" ||
     type === "analysis_completed" ||
     type === "subscription_updated" ||
-    type === "payment_succeeded"
+    type === "payment_succeeded" ||
+    type === "payment_failed"
   )
 }
 
